@@ -30,25 +30,33 @@ Every member should be able to answer all of these. Draft answers are starting p
 - **Who does the model miss, and why?** Experienced, senior, non-overtime employees who look like stayers on every recorded feature. It catches 1 of 19 senior-role leavers. The data has no exit reason, so retirement cannot be told apart from resignation.
 
 ## Segments (Track 1)
-- **How did you choose k?** Elbow, silhouette and the dendrogram. Silhouette is low (overlapping groups), which is normal for HR data; say so.
+- **How did you choose k?** A rule fixed before running: k between 3 and 6, drop any k whose bootstrap stability (ARI over 50 resamples) is below 0.60, then highest silhouette. k = 3 wins: stability 0.98 vs 0.64-0.71 for k = 4-6, and Ward's dendrogram agrees (ARI 0.81). Silhouette is only 0.14, so the groups overlap: stable regions of one population, not islands.
+- **Why not k = 2?** It has the best silhouette (0.28) but just splits senior from junior; nothing to act on.
+- **What are the segments?** Overtime crew (34% attrition), Steady core (11%), Senior veterans (8%). Satisfaction scores barely differ between them, so the split is workload and seniority, not mood.
 - **Why scale before clustering?** K-Means uses distances; unscaled income would dominate.
-- **What does DBSCAN add?** It finds dense groups without fixing k and labels unusual profiles as outliers.
+- **What does DBSCAN add?** Here, only outlier detection: with min_samples = 24 (2 x 12 features) and eps at the k-distance knee (3.27) it finds one dense cluster plus 32 unusual profiles, and still one cluster at eps +/-10%.
+- **Why not cluster on SHAP values?** We tried. Raw SHAP (not standardised: they already share the log-odds unit) gives stable groups, but they separate leavers less well than feature clusters (Cramer's V 0.20 vs 0.27) and are dominated by job role and pay/seniority pulling in opposite directions (collinearity).
 
 ## Recommender (Track 3)
 - **Where does the collaborative data come from?** It is simulated: no real record of interventions exists. We say this on screen. The content-based part uses real model output.
 - **What is Funk SVD?** Factorises the sparse rating matrix into employee and intervention factors, learned by gradient descent on observed cells only, with L2 regularisation.
-- **Does CF beat a baseline?** Compare RMSE and pairwise ranking vs the item-mean baseline in metrics.json. Gains are small on sparse data, which is why content-based gets more weight.
+- **Does CF beat a baseline?** Only with lots of data. Against item-mean (floor) and the noise-free oracle (ceiling), CF closes 21% of the RMSE gap at 50% of outcomes observed, 39% at 80%, and nothing below 30%. With 8 interventions each employee has at most 8 outcomes, so their needs are hard to infer.
+- **What went wrong on the way?** Funk SVD and the simulator both used seed 42, so the model's starting factors were the simulated noise; it "beat" the oracle. Spotted because beating a perfect model is impossible; fixed with a separate random stream and a regression test.
+- **How was alpha chosen?** NDCG@3 on unobserved interventions; the curve is flat (0.4 vs 0.6 differ by less than the seed-to-seed std), so 0.6 stays. CF is scored against the simulation it learned from, so this test favours CF anyway.
 
 ## Forecast (Track 4)
-- **Ridge vs Lasso?** Ridge (L2) shrinks all coefficients; Lasso (L1) can set some to zero (feature selection). Report CV R² and how many coefficients Lasso zeroed.
+- **Ridge vs Lasso?** Tied: R2 0.872 both, paired difference 0.00003 +/- 0.00029 over 15 folds. We keep Ridge. Lasso zeroed two columns, but that is not feature selection: each set of one-hot dummies sums to 1 and job role sits inside department, so Lasso just dropped redundant columns.
 - **Why log income?** Pay is right-skewed; the log makes errors proportional.
-- **How did you validate ARIMA?** Rolling-origin time-series CV against a naive last-value forecast. Random k-fold would leak the future into the past.
+- **How did you pick the ARIMA order?** d first, from ADF and KPSS together (d = 1), then p and q by AIC: ARIMA(2,1,3). AIC is not comparable across different d, which the first version got wrong.
+- **How did you validate it?** Rolling-origin CV, 6 origins x 12 months. ARIMA lost to "next month = this month" (MAE 0.197 vs 0.179; won 1 of 6 folds), and so did the simpler ARIMA(0,1,1). The quits rate behaves like a random walk at a 12-month horizon, so the app uses the naive forecast. Random k-fold would leak the future into the past.
 - **Is the US quits rate relevant to this company?** Only as a macro signal; we state the proportionality assumption.
 
 ## HR Copilot (Track 5)
 - **What is RAG?** Retrieve relevant policy text, then make the LLM answer only from it, citing sections. Reduces invented answers.
 - **Cosine vs Euclidean?** Cosine compares direction; Euclidean also counts vector length. On L2-normalised vectors (e.g. TF-IDF) they rank results identically, because squared distance = 2 - 2 x cosine.
-- **How did you evaluate retrieval?** Hit@3 and MRR on hand-labelled questions.
+- **How did you evaluate retrieval?** 33 hand-labelled manager questions, worded differently from the handbook and written before any retrieval run: TF-IDF hit@1 0.79, hit@3 0.88, MRR 0.85. On un-normalised TF-IDF, Euclidean collapses (MRR 0.33) because long chunks sit far from short questions; cosine is unaffected.
+- **Where does TF-IDF fail?** Vocabulary mismatch: "quit" vs "leave", "sign off" vs "approval". One question shares no word with the handbook at all; the app now says "no policy found" instead of returning a random section. Sentence embeddings are the fix to test.
+- **Where do the policies come from?** Each rule cites the EU Working Time, Pay Transparency, GDPR and AI Act texts, the UK Flexible Working Act 2023, or GitLab's public handbook; the rest is marked "company choice". See data/knowledge_base/SOURCES.md.
 
 ## Engineering
 - **How do you prevent leakage?** Everything that learns sits inside the pipeline; the threshold uses out-of-fold predictions; the test set is touched once.

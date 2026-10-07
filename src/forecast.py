@@ -117,35 +117,69 @@ def _fit_arima(series: pd.Series, order):
         return ARIMA(series, order=order).fit()
 
 
-def select_arima_order(series: pd.Series, p=range(0, 3), d=range(0, 2), q=range(0, 3)):
-    """Grid search over (p, d, q), pick the lowest AIC."""
+def choose_d(series: pd.Series, max_d: int = 2, alpha: float = 0.05) -> tuple[int, list[dict]]:
+    """Order of differencing from two tests with opposite null hypotheses:
+    ADF  (null = unit root, i.e. NOT stationary) -> want p < alpha
+    KPSS (null = stationary)                     -> want p > alpha
+    Stationary only when both agree; otherwise difference once more.
+
+    Phase 3 fix: the skeleton picked d inside the AIC grid, but AIC values from
+    models with different d are fitted to different data (the series vs its
+    differences), so they cannot be compared.
+    """
+    from statsmodels.tsa.stattools import adfuller, kpss
+    log, x = [], series.dropna()
+    for d in range(max_d + 1):
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")  # KPSS warns when p is outside its lookup table
+            adf_p = float(adfuller(x, autolag="AIC")[1])
+            kpss_p = float(kpss(x, regression="c", nlags="auto")[1])
+        ok = adf_p < alpha and kpss_p > alpha
+        log.append({"d": d, "adf_p": adf_p, "kpss_p": kpss_p, "stationary": ok})
+        if ok:
+            return d, log
+        x = x.diff().dropna()
+    return max_d, log
+
+
+def select_arima_order(series: pd.Series, p=range(0, 4), q=range(0, 4), d: int | None = None):
+    """Fix d with choose_d, then pick (p, q) by lowest AIC (comparable now,
+    as every candidate is fitted to the same differenced series)."""
+    d = choose_d(series)[0] if d is None else d
     results = []
-    for order in itertools.product(p, d, q):
+    for pp, qq in itertools.product(p, q):
         try:
-            results.append((order, _fit_arima(series, order).aic))
+            results.append(((pp, d, qq), _fit_arima(series, (pp, d, qq)).aic))
         except Exception:  # some orders fail to converge; skip them
             continue
     results.sort(key=lambda r: r[1])
     return results[0][0], pd.DataFrame(results, columns=["order", "aic"])
 
 
-def ts_cross_validate(series: pd.Series, order, horizon: int = 12, n_splits: int = 3) -> dict:
+def ts_cross_validate(series: pd.Series, order, horizon: int = 12, n_splits: int = 6) -> dict:
     """Rolling-origin CV: train on the past, forecast the next `horizon` months,
-    move the origin forward. Compared against a naive 'last value' baseline."""
+    move the origin forward. Baselines: naive (last value) and seasonal naive
+    (same month last year). The order is fixed beforehand, so this checks the
+    model form, not the order search."""
     rows = []
     for i in range(n_splits, 0, -1):
         cut = len(series) - i * horizon
         train, test = series.iloc[:cut], series.iloc[cut:cut + horizon]
-        pred = _fit_arima(train, order).forecast(len(test))
-        naive = np.repeat(train.iloc[-1], len(test))
-        rows.append({
-            "origin": str(train.index[-1].date()),
-            "mape_arima": float(np.mean(np.abs((test - pred.values) / test)) * 100),
-            "mape_naive": float(np.mean(np.abs((test - naive) / test)) * 100),
-        })
+        preds = {"arima": _fit_arima(train, order).forecast(len(test)).to_numpy(),
+                 "naive": np.repeat(train.iloc[-1], len(test)),
+                 "seasonal_naive": train.iloc[-12:].to_numpy()[:len(test)]}
+        row = {"origin": str(train.index[-1].date()), "test_start": str(test.index[0].date())}
+        for name, pred in preds.items():
+            row[f"mae_{name}"] = float(np.mean(np.abs(test.to_numpy() - pred)))
+            row[f"mape_{name}"] = float(np.mean(np.abs((test.to_numpy() - pred) / test.to_numpy())) * 100)
+        rows.append(row)
     df = pd.DataFrame(rows)
-    return {"folds": rows, "mape_arima_mean": float(df.mape_arima.mean()),
-            "mape_naive_mean": float(df.mape_naive.mean())}
+    out = {"folds": rows, "horizon": horizon}
+    for m in ["arima", "naive", "seasonal_naive"]:
+        out[f"mae_{m}_mean"] = float(df[f"mae_{m}"].mean())
+        out[f"mape_{m}_mean"] = float(df[f"mape_{m}"].mean())
+    out["arima_beats_naive_folds"] = int((df.mae_arima < df.mae_naive).sum())
+    return out
 
 
 def forecast_arima(series: pd.Series, order, steps: int = 12) -> pd.DataFrame:
@@ -153,6 +187,20 @@ def forecast_arima(series: pd.Series, order, steps: int = 12) -> pd.DataFrame:
     ci = res.conf_int(alpha=0.2)  # 80% interval
     return pd.DataFrame({"forecast": res.predicted_mean,
                          "lower": ci.iloc[:, 0], "upper": ci.iloc[:, 1]})
+
+
+def forecast_naive(series: pd.Series, steps: int = 12, level: float = 0.8) -> pd.DataFrame:
+    """Random-walk forecast: every future month = last observed value.
+    Interval: +/- z * sd(monthly change) * sqrt(h), the textbook random-walk
+    prediction interval (Hyndman & Athanasopoulos, FPP3, section 5.5).
+    Phase 3: chosen for the app because ARIMA did not beat it in rolling CV."""
+    from scipy.stats import norm
+    sd = series.diff().dropna().std()
+    h = np.arange(1, steps + 1)
+    idx = pd.date_range(series.index[-1] + pd.offsets.MonthBegin(1), periods=steps, freq="MS")
+    half = norm.ppf(0.5 + level / 2) * sd * np.sqrt(h)
+    last = float(series.iloc[-1])
+    return pd.DataFrame({"forecast": last, "lower": last - half, "upper": last + half}, index=idx)
 
 
 def forecast_prophet(series: pd.Series, steps: int = 12) -> pd.DataFrame | None:

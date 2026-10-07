@@ -114,3 +114,52 @@ def test_fairness_age_bands_match_labels():
     bands = r[r.attribute == "AgeBand"].set_index("group").n
     assert bands["<30"] == 1 and bands["30-39"] == 1 and bands["40-49"] == 1 and bands["50+"] == 1
 
+
+# --------------------------------------------------------------------- Phase 3
+def test_knee_index_finds_the_bend():
+    y = np.r_[np.linspace(0, 1, 90), np.linspace(1.5, 10, 10)]  # flat, then a sharp rise
+    assert 85 <= segment.knee_index(y) <= 92
+
+
+def test_persona_names_follow_the_profile_not_the_number(df):
+    X, _ = segment.scale(df)
+    prof = segment.profile_clusters(df, segment.fit_kmeans(X, 3).labels_)
+    names = segment.persona_names(prof)
+    assert sorted(names.values()) == sorted(segment.PERSONA_RULES.values())
+    assert names[int(prof.JobLevel.idxmax())] == segment.PERSONA_RULES["senior"]
+    shuffled = prof.rename(index={0: 2, 1: 0, 2: 1})  # renumber the clusters
+    assert segment.persona_names(shuffled)[int(shuffled.JobLevel.idxmax())] == segment.PERSONA_RULES["senior"]
+
+
+def test_cf_does_not_start_from_the_simulated_noise(df):
+    """Regression test for the Phase 3 seed-collision leak."""
+    R = recommend.simulate_response_matrix(df, observed_frac=1.0)
+    m = recommend.FunkSVD(n_factors=R.shape[1], epochs=0).fit(R)
+    noise = np.random.default_rng(config.RANDOM_STATE).normal(0, 0.6, R.shape)
+    assert abs(np.corrcoef(m.P_.ravel(), noise.ravel())[0, 1]) < 0.05
+
+
+def test_tfidf_cosine_equals_euclidean_and_empty_query_flagged():
+    r = rag.Retriever(rag.load_chunks(), prefer_transformer=False)
+    q = "My team member has been doing long hours for weeks"
+    assert r.retrieve(q, 5, "cosine").chunk_id.tolist() == r.retrieve(q, 5, "euclidean").chunk_id.tolist()
+    assert not r.retrieve("zzzz qqqq", 3).matched.iloc[0]
+
+
+def test_driver_query_uses_handbook_words():
+    q = rag.driver_query("What can I offer?", ["OverTime", "MonthlyIncome"])
+    assert "overtime" in q and "salary" in q
+
+
+def test_handbook_has_no_placeholders():
+    text = config.HANDBOOK.read_text(encoding="utf-8")
+    assert "[N]" not in text and "[amount]" not in text
+
+
+def test_naive_forecast_and_d_selection():
+    from src import forecast
+    s = pd.Series(np.cumsum(np.random.default_rng(0).normal(0, 0.1, 120)) + 2,
+                  index=pd.date_range("2010-01-01", periods=120, freq="MS"))
+    fc = forecast.forecast_naive(s, 12)
+    assert (fc.forecast == s.iloc[-1]).all() and (fc.upper.diff().dropna() > 0).all()
+    assert forecast.choose_d(s)[0] == 1  # a random walk needs one difference

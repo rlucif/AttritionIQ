@@ -20,7 +20,8 @@ source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 
 python -m src.data --download      # fetch the IBM dataset into data/raw/
-# optional: save https://fred.stlouisfed.org/series/JTSQUR as data/external/JTSQUR.csv
+# data/external/JTSQUR.csv (US quits rate, Dec 2000 - Aug 2026) is committed as a snapshot;
+# to refresh it, download https://fred.stlouisfed.org/series/JTSQUR -> CSV into the same path
 
 python train.py --fast             # quick check (~1 min)
 python train.py                    # full run: tuning, CV, figures, metrics
@@ -80,4 +81,23 @@ export GEMINI_API_KEY=...                   # or ANTHROPIC_API_KEY=...
 export LLM_MODEL=<current model name from the provider's docs>
 ```
 
+Windows PowerShell: `$env:LLM_PROVIDER="gemini"`, `$env:GEMINI_API_KEY="..."` (a free key comes from Google AI Studio).
+
 Never commit API keys. Without a key the app shows a template brief, so the demo still works offline.
+
+To compare TF-IDF with sentence embeddings (needs the model download, about 90 MB, plus PyTorch):
+
+```bash
+pip install sentence-transformers
+python -m experiments.phase3_rag     # writes reports/phase3_rag.json; the "minilm" rows appear only here
+```
+
+Phase 3 experiments (each writes a `reports/phase3_*.json` file; see `docs/PHASE3_RESULTS.md`):
+
+```bash
+python -m experiments.phase3_segments      # k, DBSCAN eps, SHAP segments
+python -m experiments.phase3_recommender   # CF vs density, hybrid alpha
+python -m experiments.phase3_paymodel      # Ridge vs Lasso
+python -m experiments.phase3_forecast      # ARIMA vs naive on JOLTS
+python -m experiments.phase3_rag           # retrieval comparison
+```

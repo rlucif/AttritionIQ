@@ -53,8 +53,13 @@ def load_chunks(path=None, max_words: int = 120) -> pd.DataFrame:
 # Embeddings
 # --------------------------------------------------------------------------
 class Embedder:
-    def __init__(self, prefer_transformer: bool = True):
+    """tfidf_norm='l2' (sklearn default) makes every vector unit length, so
+    cosine and Euclidean rank identically (|a-b|^2 = 2 - 2cos). Phase 3 uses
+    tfidf_norm=None to show when the two metrics actually differ."""
+
+    def __init__(self, prefer_transformer: bool = True, tfidf_norm: str | None = "l2"):
         self.backend = "tfidf"
+        self.tfidf_norm = tfidf_norm
         if prefer_transformer:
             try:
                 from sentence_transformers import SentenceTransformer
@@ -66,7 +71,8 @@ class Embedder:
     def fit(self, texts: list[str]):
         if self.backend == "tfidf":
             from sklearn.feature_extraction.text import TfidfVectorizer
-            self._tfidf = TfidfVectorizer(stop_words="english", ngram_range=(1, 2), sublinear_tf=True).fit(texts)
+            self._tfidf = TfidfVectorizer(stop_words="english", ngram_range=(1, 2), sublinear_tf=True,
+                                          norm=self.tfidf_norm).fit(texts)
         return self
 
     def encode(self, texts: list[str]) -> np.ndarray:
@@ -102,45 +108,84 @@ class VectorIndex:
                 s, i = self.ip.search(qn, k)
                 return i[0], s[0]
             s = self.norm @ qn[0]
-            i = np.argsort(-s)[:k]
+            i = np.argsort(-s, kind="stable")[:k]  # stable: ties keep handbook order in both metrics
             return i, s[i]
         if self.backend == "faiss":
             d, i = self.l2.search(q, k)
             return i[0], np.sqrt(d[0])
         d = np.linalg.norm(self.raw - q, axis=1)
-        i = np.argsort(d)[:k]
+        i = np.argsort(d, kind="stable")[:k]
         return i, d[i]
 
 
 class Retriever:
-    def __init__(self, chunks: pd.DataFrame, prefer_transformer: bool = True):
+    def __init__(self, chunks: pd.DataFrame, prefer_transformer: bool = True, tfidf_norm: str | None = "l2"):
         self.chunks = chunks
-        self.embedder = Embedder(prefer_transformer).fit(chunks.text.tolist())
+        self.embedder = Embedder(prefer_transformer, tfidf_norm).fit(chunks.text.tolist())
         self.index = VectorIndex(self.embedder.encode(chunks.text.tolist()))
 
     def retrieve(self, query: str, k: int = 3, metric: str = "cosine") -> pd.DataFrame:
-        idx, scores = self.index.search(self.embedder.encode([query])[0], k, metric)
+        """Top-k chunks. `matched` is False when the query vector is all zeros
+        (TF-IDF: no word in common with the handbook): the ranking is then
+        meaningless, and the app should say "no relevant policy found"."""
+        q = self.embedder.encode([query])[0]
+        idx, scores = self.index.search(q, k, metric)
         out = self.chunks.iloc[idx].copy()
         out["score"] = scores
         out["metric"] = metric
+        out["matched"] = bool(np.linalg.norm(q) > 0)
         return out
 
 
 def evaluate_retrieval(retriever: Retriever, eval_df: pd.DataFrame, k: int = 3) -> dict:
     """eval_df columns: question, relevant_section (hand-labelled by the team).
-    hit@k = right section appears in the top k; MRR = 1 / rank of first hit."""
+    hit@1 / hit@k = right section in the top 1 / top k chunks;
+    MRR = mean of 1 / rank of the first chunk from the right section."""
     out = {}
+    n = len(retriever.chunks)
     for metric in ["cosine", "euclidean"]:
-        hits, rr = [], []
+        h1, hk, rr, misses = [], [], [], []
         for row in eval_df.itertuples():
-            secs = retriever.retrieve(row.question, k, metric).section.tolist()
-            hit = row.relevant_section in secs
-            hits.append(hit)
-            rr.append(1 / (secs.index(row.relevant_section) + 1) if hit else 0)
-        out[metric] = {f"hit_at_{k}": float(np.mean(hits)), "mrr": float(np.mean(rr))}
+            res = retriever.retrieve(row.question, n, metric)
+            secs = res.section.tolist()
+            # an all-zero query vector retrieves nothing meaningful: count it as a miss
+            rank = (secs.index(row.relevant_section) + 1
+                    if res.matched.iloc[0] and row.relevant_section in secs else None)
+            h1.append(rank == 1)
+            hk.append(rank is not None and rank <= k)
+            rr.append(1 / rank if rank else 0)
+            if rank != 1:
+                misses.append({"question": row.question, "expected": row.relevant_section,
+                               "got": secs[0] if res.matched.iloc[0] else "(no word in common)",
+                               "rank": rank})
+        out[metric] = {"hit_at_1": float(np.mean(h1)), f"hit_at_{k}": float(np.mean(hk)),
+                       "mrr": float(np.mean(rr)), "not_first": misses}
     out["n_questions"] = int(len(eval_df))
+    out["n_chunks"] = int(n)
     out["embedding_backend"] = retriever.embedder.backend
     return out
+
+
+# Plain words for model features, so a retrieval query built from SHAP drivers
+# uses the handbook's vocabulary ("MonthlyIncome" matches nothing; "salary pay" does).
+FEATURE_WORDS = {
+    "OverTime": "overtime workload hours", "WorkLifeBalance": "workload flexible working",
+    "MonthlyIncome": "salary pay compensation", "PayGapPct": "pay equity salary range",
+    "PercentSalaryHike": "salary adjustment pay", "StockOptionLevel": "stock equity retention grant",
+    "JobLevel": "promotion level", "YearsSinceLastPromotion": "promotion",
+    "YearsInCurrentRole": "role rotation internal mobility", "TotalWorkingYears": "career progression",
+    "YearsAtCompany": "tenure stay interview", "YearsWithCurrManager": "manager team",
+    "RelationshipSatisfaction": "manager team relationship", "EnvironmentSatisfaction": "working environment team",
+    "JobSatisfaction": "stay interview role", "JobInvolvement": "development mentoring",
+    "TrainingTimesLastYear": "training learning development", "DistanceFromHome": "commute remote work",
+    "BusinessTravel": "business travel", "NumCompaniesWorked": "stay interview retention",
+    "JobRole": "role rotation internal mobility", "Department": "internal mobility team",
+}
+
+
+def driver_query(question: str, features) -> str:
+    """Question + plain-word versions of the employee's top risk drivers."""
+    return " ".join([question] + [FEATURE_WORDS.get(f, f) for f in features])
 
 
 # --------------------------------------------------------------------------

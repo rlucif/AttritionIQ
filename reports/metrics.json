@@ -1,5 +1,5 @@
 {
-  "run_time": "2026-10-07 16:40:08",
+  "run_time": "2026-10-07 18:54:31",
   "fast_mode": false,
   "data": {
     "rows": 1470,
@@ -1229,50 +1229,73 @@
       {
         "k": 2,
         "inertia": 14168.4383,
-        "silhouette": 0.2775
+        "silhouette": 0.2775,
+        "stability_ari_mean": 0.9747,
+        "stability_ari_std": 0.0203
       },
       {
         "k": 3,
         "inertia": 12942.4216,
-        "silhouette": 0.1386
+        "silhouette": 0.1386,
+        "stability_ari_mean": 0.9792,
+        "stability_ari_std": 0.0882
       },
       {
         "k": 4,
         "inertia": 12246.7108,
-        "silhouette": 0.1092
+        "silhouette": 0.1092,
+        "stability_ari_mean": 0.6394,
+        "stability_ari_std": 0.1875
       },
       {
         "k": 5,
         "inertia": 11598.7259,
-        "silhouette": 0.1289
+        "silhouette": 0.1289,
+        "stability_ari_mean": 0.7095,
+        "stability_ari_std": 0.1953
       },
       {
         "k": 6,
         "inertia": 11028.8036,
-        "silhouette": 0.122
+        "silhouette": 0.122,
+        "stability_ari_mean": 0.6825,
+        "stability_ari_std": 0.1721
       },
       {
         "k": 7,
         "inertia": 10607.5839,
-        "silhouette": 0.1098
+        "silhouette": 0.1098,
+        "stability_ari_mean": 0.6403,
+        "stability_ari_std": 0.1084
       },
       {
         "k": 8,
         "inertia": 10178.746,
-        "silhouette": 0.1127
+        "silhouette": 0.1127,
+        "stability_ari_mean": 0.7072,
+        "stability_ari_std": 0.1115
       }
     ],
     "k_chosen": 3,
+    "k_rule_result": 3,
     "silhouette_kmeans": 0.1386249706827222,
+    "stability_kmeans": 0.9792456844748267,
     "agreement_kmeans_vs_hierarchical_ARI": 0.8119269358834974,
-    "dbscan_eps": 2.704724055689802,
-    "dbscan_outliers": 66,
+    "dbscan_min_samples": 24,
+    "dbscan_eps": 3.268451428125781,
+    "dbscan_outliers": 32,
     "dbscan_clusters": 1,
-    "why_segments_silhouette": 0.07840359935126091,
+    "why_segments_silhouette": 0.20505138766108993,
+    "why_segments_note": "raw SHAP (log-odds), one-hot summed, pay & seniority grouped; test rows only",
+    "personas_draft": {
+      "2": "Senior veterans",
+      "0": "Overtime crew",
+      "1": "Steady core"
+    },
     "cluster_descriptions": {
-      "0": "WorkLifeBalance low, JobSatisfaction high, OverTime high",
-      "1": "TrainingTimesLastYear high, EnvironmentSatisfaction low, OverTime low",
-      "2": "YearsAtCompany high, JobLevel high, MonthlyIncome high"
+      "0": "OverTime high (+1.6 sd), MonthlyIncome low (-0.3 sd), JobLevel low (-0.3 sd)",
+      "1": "OverTime low (-0.6 sd), MonthlyIncome low (-0.4 sd), JobLevel low (-0.4 sd)",
+      "2": "MonthlyIncome high (+1.7 sd), JobLevel high (+1.6 sd), TotalWorkingYears high (+1.6 sd)"
     }
   },
   "pay_model": {
@@ -1328,12 +1351,105 @@
     }
   },
   "macro_forecast": {
-    "status": "skipped - add JTSQUR.csv (see README)"
+    "d_selection": [
+      {
+        "d": 0,
+        "adf_p": 0.20296878772018695,
+        "kpss_p": 0.01,
+        "stationary": false
+      },
+      {
+        "d": 1,
+        "adf_p": 0.00013258699961124498,
+        "kpss_p": 0.1,
+        "stationary": true
+      }
+    ],
+    "arima_order": [
+      2,
+      1,
+      3
+    ],
+    "ts_cv": {
+      "folds": [
+        {
+          "origin": "2020-08-01",
+          "test_start": "2020-09-01",
+          "mae_arima": 0.4547658563531754,
+          "mape_arima": 17.54417878937139,
+          "mae_naive": 0.3999999999999999,
+          "mape_naive": 15.327933740977217,
+          "mae_seasonal_naive": 0.4416666666666666,
+          "mape_seasonal_naive": 16.587958337958337
+        },
+        {
+          "origin": "2021-08-01",
+          "test_start": "2021-09-01",
+          "mae_arima": 0.10151768655847082,
+          "mape_arima": 3.5462125069238746,
+          "mae_naive": 0.09166666666666667,
+          "mape_naive": 3.210204014801716,
+          "mae_seasonal_naive": 0.39166666666666644,
+          "mape_seasonal_naive": 13.600871776159131
+        },
+        {
+          "origin": "2022-08-01",
+          "test_start": "2022-09-01",
+          "mae_arima": 0.2716136197041236,
+          "mape_arima": 11.25314366999824,
+          "mae_naive": 0.3083333333333332,
+          "mape_naive": 12.75292126016763,
+          "mae_seasonal_naive": 0.3499999999999999,
+          "mape_seasonal_naive": 14.344564185143893
+        },
+        {
+          "origin": "2023-08-01",
+          "test_start": "2023-09-01",
+          "mae_arima": 0.1754462204447136,
+          "mape_arima": 8.214270567104197,
+          "mae_naive": 0.12499999999999978,
+          "mape_naive": 5.898268398268388,
+          "mae_seasonal_naive": 0.3166666666666666,
+          "mape_seasonal_naive": 14.571961854570548
+        },
+        {
+          "origin": "2024-08-01",
+          "test_start": "2024-09-01",
+          "mae_arima": 0.10666964806761454,
+          "mape_arima": 5.4002407334679345,
+          "mae_naive": 0.10000000000000009,
+          "mape_naive": 5.049840510366831,
+          "mae_seasonal_naive": 0.17500000000000004,
+          "mape_seasonal_naive": 8.86562998405104
+        },
+        {
+          "origin": "2025-08-01",
+          "test_start": "2025-09-01",
+          "mae_arima": 0.07434909250001469,
+          "mape_arima": 3.8839776565536464,
+          "mae_naive": 0.050000000000000044,
+          "mape_naive": 2.631578947368424,
+          "mae_seasonal_naive": 0.10000000000000009,
+          "mape_seasonal_naive": 5.131578947368426
+        }
+      ],
+      "horizon": 12,
+      "mae_arima_mean": 0.19739368727135212,
+      "mape_arima_mean": 8.307003987236547,
+      "mae_naive_mean": 0.1791666666666666,
+      "mape_naive_mean": 7.4784578119917,
+      "mae_seasonal_naive_mean": 0.2958333333333333,
+      "mape_seasonal_naive_mean": 12.183760847541896,
+      "arima_beats_naive_folds": 1
+    },
+    "model_used": "naive",
+    "macro_ratio": 0.9743589743589741,
+    "last_observation": "2026-08-01"
   },
   "recommender_cf": {
-    "rmse_svd": 0.959755794190444,
+    "rmse_svd": 0.9710889066544063,
     "rmse_item_mean_baseline": 1.0016435815066054,
-    "pairwise_ranking_svd": 0.5666666666666667,
+    "pairwise_ranking_svd": 0.5966666666666667,
     "pairwise_ranking_item_mean": 0.51,
     "pairwise_ranking_random": 0.5,
     "n_test_ratings": 1201,
@@ -1341,14 +1457,105 @@
   },
   "rag_retrieval": {
     "cosine": {
-      "hit_at_3": 0.9,
-      "mrr": 0.875
+      "hit_at_1": 0.7878787878787878,
+      "hit_at_3": 0.8787878787878788,
+      "mrr": 0.846969696969697,
+      "not_first": [
+        {
+          "question": "He is unhappy with his manager. What support is available?",
+          "expected": "Manager Relationship and Team Fit",
+          "got": "Overtime and Workload",
+          "rank": 6
+        },
+        {
+          "question": "How do we talk to someone who might quit?",
+          "expected": "Stay Interviews and Exit Process",
+          "got": "(no word in common)",
+          "rank": null
+        },
+        {
+          "question": "After a late-night release, how soon can I ask him to log back on?",
+          "expected": "Overtime and Workload",
+          "got": "Responsible Use of People Analytics",
+          "rank": 4
+        },
+        {
+          "question": "When does the next round of promotion decisions happen?",
+          "expected": "Promotion and Career Progression",
+          "got": "Responsible Use of People Analytics",
+          "rank": 2
+        },
+        {
+          "question": "Who signs off if I want to move someone up a level mid-year?",
+          "expected": "Promotion and Career Progression",
+          "got": "Learning and Development",
+          "rank": 3
+        },
+        {
+          "question": "How long must someone wait before applying for a job in another department?",
+          "expected": "Internal Mobility and Role Rotation",
+          "got": "Compensation and Pay Equity",
+          "rank": 2
+        },
+        {
+          "question": "What should a conversation with an employee we fear is about to resign cover?",
+          "expected": "Stay Interviews and Exit Process",
+          "got": "Manager Relationship and Team Fit",
+          "rank": 5
+        }
+      ]
     },
     "euclidean": {
-      "hit_at_3": 0.9,
-      "mrr": 0.875
+      "hit_at_1": 0.7878787878787878,
+      "hit_at_3": 0.8787878787878788,
+      "mrr": 0.846969696969697,
+      "not_first": [
+        {
+          "question": "He is unhappy with his manager. What support is available?",
+          "expected": "Manager Relationship and Team Fit",
+          "got": "Overtime and Workload",
+          "rank": 6
+        },
+        {
+          "question": "How do we talk to someone who might quit?",
+          "expected": "Stay Interviews and Exit Process",
+          "got": "(no word in common)",
+          "rank": null
+        },
+        {
+          "question": "After a late-night release, how soon can I ask him to log back on?",
+          "expected": "Overtime and Workload",
+          "got": "Responsible Use of People Analytics",
+          "rank": 4
+        },
+        {
+          "question": "When does the next round of promotion decisions happen?",
+          "expected": "Promotion and Career Progression",
+          "got": "Responsible Use of People Analytics",
+          "rank": 2
+        },
+        {
+          "question": "Who signs off if I want to move someone up a level mid-year?",
+          "expected": "Promotion and Career Progression",
+          "got": "Learning and Development",
+          "rank": 3
+        },
+        {
+          "question": "How long must someone wait before applying for a job in another department?",
+          "expected": "Internal Mobility and Role Rotation",
+          "got": "Compensation and Pay Equity",
+          "rank": 2
+        },
+        {
+          "question": "What should a conversation with an employee we fear is about to resign cover?",
+          "expected": "Stay Interviews and Exit Process",
+          "got": "Manager Relationship and Team Fit",
+          "rank": 5
+        }
+      ]
     },
-    "n_questions": 20,
+    "n_questions": 33,
+    "n_chunks": 13,
     "embedding_backend": "tfidf"
   }
 }

@@ -254,35 +254,48 @@ def main(fast: bool = False):
                                            "reports/missed_leavers_oof_train.csv"]}
 
     # ------------------------------------------------- Track 1: segments
-    step("Workforce segmentation")
+    # Phase 3 rules (docs/PHASE3_PLAN.md, results in docs/PHASE3_RESULTS.md)
+    step("Workforce segmentation (k rule with bootstrap stability, knee eps)")
     Xs, seg_scaler = segment.scale(df)
     k_table = segment.choose_k(Xs)
-    k = int(k_table[k_table.k.between(3, 6)].sort_values("silhouette", ascending=False).k.iloc[0])
+    k_rule = segment.select_k(k_table)
+    k = k_rule or 2
     km = segment.fit_kmeans(Xs, k)
     h_labels, Z = segment.fit_hierarchical(Xs, k)
-    kd = segment.k_distance(Xs, k=5)
-    eps = float(np.percentile(kd, 90))  # TODO(team): pick eps from the knee of the k-distance plot
-    db_labels = segment.fit_dbscan(Xs, eps=eps, min_samples=5)
+    eps, min_samples, kd = segment.choose_eps(Xs)
+    db_labels = segment.fit_dbscan(Xs, eps=eps, min_samples=min_samples)
     profile = segment.profile_clusters(df, km.labels_)
-    why_labels, why_sil = segment.cluster_on_shap(ex.values, k=3)
+    personas = segment.persona_names(profile) if k == 3 else {c: f"Segment {c}" for c in profile.index}
+    S_shap = segment.group_shap(ex.values, explainer.feature_names, lambda f: data.base_feature(f, lists))
+    why_labels, why_sil = segment.cluster_on_shap(S_shap.to_numpy(), k=k)
     from sklearn.metrics import adjusted_rand_score
     metrics["segmentation"] = {
         "k_selection": k_table.round(4).to_dict("records"), "k_chosen": k,
+        "k_rule_result": k_rule if k_rule else "no stable k in 3-6; fell back to 2",
         "silhouette_kmeans": float(k_table.set_index("k").loc[k, "silhouette"]),
+        "stability_kmeans": float(k_table.set_index("k").loc[k, "stability_ari_mean"]),
         "agreement_kmeans_vs_hierarchical_ARI": float(adjusted_rand_score(km.labels_, h_labels)),
-        "dbscan_eps": eps, "dbscan_outliers": int((db_labels == -1).sum()),
+        "dbscan_min_samples": min_samples, "dbscan_eps": eps,
+        "dbscan_outliers": int((db_labels == -1).sum()),
         "dbscan_clusters": int(len(set(db_labels)) - (1 if -1 in db_labels else 0)),
         "why_segments_silhouette": float(why_sil),
-        "cluster_descriptions": segment.describe_clusters(profile),
+        "why_segments_note": "raw SHAP (log-odds), one-hot summed, pay & seniority grouped; test rows only",
+        "personas_draft": {str(c): n for c, n in personas.items()},
+        "cluster_descriptions": segment.describe_clusters(profile, df),
     }
-    fig, ax = plt.subplots(1, 2, figsize=(9, 3.5))
-    ax[0].plot(k_table.k, k_table.inertia, marker="o"); ax[0].set_title("Elbow (inertia)"); ax[0].set_xlabel("k")
-    ax[1].plot(k_table.k, k_table.silhouette, marker="o"); ax[1].set_title("Silhouette"); ax[1].set_xlabel("k")
+    fig, ax = plt.subplots(1, 3, figsize=(12, 3.5))
+    ax[0].plot(k_table.k, k_table.inertia, marker="o"); ax[0].set_title("Elbow (inertia)")
+    ax[1].plot(k_table.k, k_table.silhouette, marker="o"); ax[1].set_title("Silhouette")
+    ax[2].errorbar(k_table.k, k_table.stability_ari_mean, yerr=k_table.stability_ari_std, marker="o", capsize=3)
+    ax[2].axhline(0.60, ls="--", c="grey"); ax[2].set_title("Bootstrap stability (ARI)")
+    for a in ax:
+        a.set_xlabel("k"); a.axvline(k, ls=":", c="k")
     savefig("kmeans_k_selection")
     plt.figure(figsize=(8, 4)); dendrogram(Z, truncate_mode="lastp", p=30, no_labels=True)
     plt.title("Hierarchical clustering (Ward)"); savefig("dendrogram")
-    plt.figure(figsize=(6, 4)); plt.plot(kd); plt.axhline(eps, ls="--", c="k")
-    plt.title("k-distance plot (k=5) for DBSCAN eps"); plt.ylabel("distance"); savefig("dbscan_k_distance")
+    plt.figure(figsize=(6, 4)); plt.plot(kd); plt.axhline(eps, ls="--", c="k", label=f"knee eps = {eps:.2f}")
+    plt.xlabel("employees sorted by distance"); plt.ylabel(f"distance to {min_samples}th neighbour")
+    plt.title(f"k-distance plot (k = {min_samples}) for DBSCAN eps"); plt.legend(); savefig("dbscan_k_distance")
 
     # ------------------------------------------------- Track 4: forecast
     step("Pay model and macro forecast")
@@ -290,19 +303,26 @@ def main(fast: bool = False):
     jolts = forecast.load_jolts()
     jolts_bundle = None
     if jolts is not None and len(jolts) > 48:
-        order, aic_table = forecast.select_arima_order(jolts)
-        cv = forecast.ts_cross_validate(jolts, order)
-        fc = forecast.forecast_arima(jolts, order)
+        d, d_log = forecast.choose_d(jolts)
+        order, aic_table = forecast.select_arima_order(jolts, d=d)
+        cv = forecast.ts_cross_validate(jolts, order, horizon=12, n_splits=6)
+        fc_arima = forecast.forecast_arima(jolts, order)
+        # Phase 3 rule: use ARIMA only if it beats the naive forecast in rolling CV
+        use = "ARIMA" if cv["mae_arima_mean"] < cv["mae_naive_mean"] else "naive"
+        fc = fc_arima if use == "ARIMA" else forecast.forecast_naive(jolts)
         ratio = forecast.macro_adjustment(jolts, fc)
-        metrics["macro_forecast"] = {"arima_order": list(order), "ts_cv": cv, "macro_ratio": ratio,
+        metrics["macro_forecast"] = {"d_selection": d_log, "arima_order": list(order), "ts_cv": cv,
+                                     "model_used": use, "macro_ratio": ratio,
                                      "last_observation": str(jolts.index[-1].date())}
-        jolts_bundle = {"series": jolts, "forecast": fc, "order": order, "ratio": ratio,
-                        "prophet": forecast.forecast_prophet(jolts)}
+        jolts_bundle = {"series": jolts, "forecast": fc, "forecast_arima": fc_arima, "order": order,
+                        "model_used": use, "ratio": ratio, "prophet": forecast.forecast_prophet(jolts)}
         plt.figure(figsize=(7, 3.5))
         jolts.iloc[-60:].plot(label="history")
-        fc.forecast.plot(label=f"ARIMA{order}")
-        plt.fill_between(fc.index, fc.lower, fc.upper, alpha=0.2)
-        plt.legend(); plt.title("US quits rate (JOLTS) - 12-month forecast"); savefig("jolts_forecast")
+        fc.forecast.plot(label=f"{use} forecast (used)")
+        plt.fill_between(fc.index, fc.lower, fc.upper, alpha=0.2, label="80% interval")
+        if use != "ARIMA":
+            fc_arima.forecast.plot(ls=":", c="grey", label=f"ARIMA{order} (lost to naive in CV)")
+        plt.legend(fontsize=8); plt.title("US quits rate (JOLTS) - 12-month forecast"); savefig("jolts_forecast")
     else:
         metrics["macro_forecast"] = {"status": f"skipped - add {config.JOLTS_DATA.name} (see README)"}
 
@@ -326,11 +346,12 @@ def main(fast: bool = False):
         "threshold": threshold, "lists": lists,
         "oof_train": oof,  # lets the app re-optimise the threshold when assumptions change
         "train": train, "test": test,
-        "segments": {"scaler": seg_scaler, "kmeans": km, "k": k, "labels": km.labels_,
+        "segments": {"scaler": seg_scaler, "kmeans": km, "k": k, "labels": km.labels_, "personas": personas,
                      "hier_labels": h_labels, "dbscan_labels": db_labels, "eps": eps,
                      "profile": profile, "pca": segment.pca_2d(Xs),
                      "rfm": segment.rfm_style_scores(df), "df_ids": df[config.ID_COL].to_numpy(),
-                     "why_labels": why_labels, "why_index": X_shap.index.to_numpy()},
+                     "why_labels": why_labels, "why_index": X_shap.index.to_numpy(),
+                     "min_samples": min_samples},
         "cf_pred": cf_pred.set_axis(df[config.ID_COL].to_numpy()),
         "cf_observed": R.set_axis(df[config.ID_COL].to_numpy()),
         "jolts": jolts_bundle,

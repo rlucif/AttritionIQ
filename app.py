@@ -181,7 +181,7 @@ with tabs[1]:
 with tabs[2]:
     seg = b["segments"]
     st.header("Workforce segments")
-    names = {k: segment.PERSONA_NAMES.get(k, f"Segment {k}") for k in range(seg["k"])}
+    names = seg.get("personas") or segment.persona_names(seg["profile"])  # DRAFT names
     plot_df = pd.DataFrame(seg["pca"], columns=["PC1", "PC2"])
     plot_df["segment"] = [names[l] for l in seg["labels"]]
     plot_df["outlier (DBSCAN)"] = np.where(seg["dbscan_labels"] == -1, "outlier", "core")
@@ -232,11 +232,16 @@ with tabs[4]:
         j = b["jolts"]
         ratio = j["ratio"]
         hist = j["series"].iloc[-72:].rename("history").to_frame()
-        fc = j["forecast"].rename(columns={"forecast": "ARIMA forecast"})
-        st.plotly_chart(px.line(pd.concat([hist, fc[["ARIMA forecast"]]]), labels={"value": "US quits rate %"}),
+        used = j.get("model_used", "ARIMA")
+        label = f"{used} forecast"
+        fc = j["forecast"].rename(columns={"forecast": label})
+        st.plotly_chart(px.line(pd.concat([hist, fc[[label]]]), labels={"value": "US quits rate %"}),
                         width="stretch")
-        st.caption(f"ARIMA{tuple(j['order'])} on JOLTS quits rate. Macro adjustment ratio = {ratio:.2f} "
-                   "(assumes company attrition moves with the US quits rate).")
+        why = ("" if used == "ARIMA" else
+               f" ARIMA{tuple(j['order'])} was tested but did not beat 'next month = this month' in back-tests, "
+               "so the simpler forecast is used.")
+        st.caption(f"US quits rate (JOLTS, BLS via FRED).{why} Macro adjustment = {ratio:.2f}: expected "
+                   "attrition is scaled by this, assuming the company moves with the US quits rate.")
     else:
         st.info(f"Add {config.JOLTS_DATA.name} from {config.JOLTS_URL} and re-run train.py to enable the macro forecast.")
     wf = forecast.workforce_forecast(workforce, ratio, mult)
@@ -258,8 +263,10 @@ with tabs[5]:
     retriever = load_retriever()
     q = st.text_input("Ask about policy for this employee", "What can I offer to keep this employee?")
     metric = st.radio("Distance metric", ["cosine", "euclidean"], horizontal=True)
-    query = q + " " + " ".join(drivers_all[drivers_all.shap > 0].feature.head(3))
+    query = rag.driver_query(q, drivers_all[drivers_all.shap > 0].feature.head(3))
     hits = retriever.retrieve(query, k=3, metric=metric)
+    if not hits.matched.iloc[0]:
+        st.warning("No policy shares any words with this question. Try rephrasing it.")
     st.dataframe(hits[["section", "score", "text"]], hide_index=True)
     if st.button("Generate retention brief"):
         summary = (f"#{emp_id}, {emp.JobRole.iloc[0]} in {emp.Department.iloc[0]}, "

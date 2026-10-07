@@ -1,0 +1,24 @@
+# Tested with Python 3.13 (needs Python 3.11+). Pinned for reproducibility.
+pandas==3.0.5
+numpy==2.5.3
+scipy==1.18.1
+scikit-learn==1.9.1
+imbalanced-learn==0.14.2
+xgboost==3.4.1
+shap==0.52.0
+statsmodels==0.15.0
+matplotlib==3.11.2
+plotly==7.1.0
+streamlit==1.65.0
+joblib==1.6.0
+faiss-cpu==1.15.1
+pytest==9.1.1
+
+# --- Optional (uncomment what you use) ---
+# Better embeddings for the HR Copilot (pulls in PyTorch, ~1 GB). Without it, TF-IDF is used.
+# sentence-transformers
+# LLM providers for the retention brief. Without a key, a template brief is shown.
+# google-genai
+# anthropic
+# Second forecasting model to compare against ARIMA
+# prophet

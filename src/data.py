@@ -37,10 +37,16 @@ ORDINAL_SCALES = [
     "StockOptionLevel", "WorkLifeBalance", "BusinessTravel",
 ]
 
-# Features created in engineer_features()
+# Features created in engineer_features() (all candidates; the recommender and
+# error analysis use them as descriptive columns)
 ENGINEERED = [
     "YearsPerCompany", "PromotionLagRatio", "ManagerTenureRatio", "SatisfactionIndex",
 ]
+# Engineered features the MODEL uses. Phase 1 ablation (reports/feature_ablation.json,
+# experiments/feature_ablation.py) found no candidate that met the keep rule, so none
+# are model inputs. ManagerTenureRatio was closest (helped both model families, not
+# significant). Re-run the ablation if features change.
+MODEL_ENGINEERED: list[str] = []
 
 # Created inside the pipeline by forecast.PayGapAdder (Track 4 -> Track 2)
 PAY_GAP_FEATURE = "PayGapPct"
@@ -57,8 +63,8 @@ def download_dataset(url: str = config.DATASET_URL, dest=config.RAW_DATA) -> Non
 
 
 def load_raw(path=None) -> pd.DataFrame:
-    path = path or config.RAW_DATA
     """Read the raw CSV. utf-8-sig strips the byte-order mark some copies carry."""
+    path = path or config.RAW_DATA
     if not path.exists():
         raise FileNotFoundError(
             f"{path} not found. Run `python -m src.data --download` or download "
@@ -83,13 +89,29 @@ def clean(df: pd.DataFrame) -> pd.DataFrame:
         df["Gender"] = (df["Gender"] == "Male").astype(int)
     if is_text("BusinessTravel"):
         df["BusinessTravel"] = df["BusinessTravel"].map(BUSINESS_TRAVEL_ORDER)
-    # TODO(team): add data-quality checks (duplicates, impossible values such as
-    # YearsAtCompany > TotalWorkingYears) and report them in the EDA notebook.
+    # Data-quality checks: see quality_report() and notebooks/01_eda.ipynb
     return df
 
 
+def quality_report(df: pd.DataFrame) -> dict:
+    """Count data problems in the RAW data. Reported in notebooks/01_eda.ipynb.
+    Phase 1 result on the IBM file: 0 duplicates, 0 missing, 0 impossible tenure
+    values; the 3 constant columns are the ones in config.DROP_COLS."""
+    return {
+        "rows": len(df),
+        "duplicate_employee_ids": int(df["EmployeeNumber"].duplicated().sum()),
+        "missing_values": int(df.isna().sum().sum()),
+        "constant_columns": [c for c in df.columns if df[c].nunique() <= 1],
+        "years_at_company_gt_total": int((df["YearsAtCompany"] > df["TotalWorkingYears"]).sum()),
+        "years_in_role_gt_company": int((df["YearsInCurrentRole"] > df["YearsAtCompany"]).sum()),
+        "years_with_manager_gt_company": int((df["YearsWithCurrManager"] > df["YearsAtCompany"]).sum()),
+        "promotion_gt_company": int((df["YearsSinceLastPromotion"] > df["YearsAtCompany"]).sum()),
+    }
+
+
 def engineer_features(df: pd.DataFrame) -> pd.DataFrame:
-    """Add ratio features a manager can understand. +1 in denominators avoids /0."""
+    """Add ratio features a manager can understand. +1 in denominators avoids /0.
+    Only MODEL_ENGINEERED ones go into the model; all are kept as descriptive columns."""
     df = df.copy()
     df["YearsPerCompany"] = df["TotalWorkingYears"] / (df["NumCompaniesWorked"] + 1)
     df["PromotionLagRatio"] = df["YearsSinceLastPromotion"] / (df["YearsAtCompany"] + 1)
@@ -97,8 +119,6 @@ def engineer_features(df: pd.DataFrame) -> pd.DataFrame:
     df["SatisfactionIndex"] = df[
         ["EnvironmentSatisfaction", "JobSatisfaction", "RelationshipSatisfaction", "WorkLifeBalance"]
     ].mean(axis=1)
-    # TODO(team): test whether each engineered feature improves CV PR-AUC.
-    # Keep only the ones that do, and record the result in reports/.
     return df
 
 
@@ -117,7 +137,7 @@ def feature_lists(exclude_sensitive: bool = config.EXCLUDE_SENSITIVE) -> dict:
         "MonthlyRate", "NumCompaniesWorked", "OverTime", "Gender", "PercentSalaryHike",
         "TotalWorkingYears", "TrainingTimesLastYear", "YearsAtCompany",
         "YearsInCurrentRole", "YearsSinceLastPromotion", "YearsWithCurrManager",
-    ] + ORDINAL_SCALES + ENGINEERED
+    ] + ORDINAL_SCALES + MODEL_ENGINEERED
     categorical = list(NOMINAL_CATEGORICALS)
     if exclude_sensitive:
         numeric = [c for c in numeric if c not in config.SENSITIVE_FEATURES]

@@ -1,0 +1,439 @@
+{
+  "run_time": "2026-10-07 12:13:56",
+  "fast_mode": false,
+  "data": {
+    "rows": 1470,
+    "columns": 36,
+    "attrition_rate": 0.16122448979591836,
+    "missing_values": 0,
+    "duplicates": 0,
+    "train_rows": 1176,
+    "test_rows": 294,
+    "excluded_sensitive": true
+  },
+  "model_comparison": {
+    "Logistic Regression": {
+      "best_params": {
+        "C": 0.19069966103000435,
+        "l1_ratio": 0.7851759613930136
+      },
+      "best_cv_pr_auc": 0.6429918276779276,
+      "repeated_cv": {
+        "pr_auc": {
+          "mean": 0.6339950762325842,
+          "std": 0.055303646173325303
+        },
+        "roc_auc": {
+          "mean": 0.8351111075129243,
+          "std": 0.02848237494095489
+        },
+        "recall": {
+          "mean": 0.7385964912280704,
+          "std": 0.057226338351930126
+        },
+        "precision": {
+          "mean": 0.3798611322178412,
+          "std": 0.030600850659780833
+        },
+        "f1": {
+          "mean": 0.5006165880462514,
+          "std": 0.032571881066074754
+        },
+        "brier": {
+          "mean": 0.1552403222533821,
+          "std": 0.013128668142961937
+        }
+      }
+    },
+    "Random Forest": {
+      "best_params": {
+        "max_depth": 14,
+        "max_features": "sqrt",
+        "min_samples_leaf": 1,
+        "n_estimators": 513
+      },
+      "best_cv_pr_auc": 0.5511288251143919,
+      "repeated_cv": {
+        "pr_auc": {
+          "mean": 0.5327005447132311,
+          "std": 0.05117569324307076
+        },
+        "roc_auc": {
+          "mean": 0.7938849263855943,
+          "std": 0.025050222419452147
+        },
+        "recall": {
+          "mean": 0.15964912280701754,
+          "std": 0.04849219284591317
+        },
+        "precision": {
+          "mean": 0.8455413105413104,
+          "std": 0.17815104027676126
+        },
+        "f1": {
+          "mean": 0.2646651574150558,
+          "std": 0.06930426109624102
+        },
+        "brier": {
+          "mean": 0.10877679324274982,
+          "std": 0.00397044274227789
+        }
+      }
+    },
+    "XGBoost": {
+      "best_params": {
+        "colsample_bytree": 0.8058265802441404,
+        "learning_rate": 0.010243250407033817,
+        "max_depth": 2,
+        "min_child_weight": 1,
+        "n_estimators": 574,
+        "reg_lambda": 1.6738085788752133,
+        "subsample": 0.6557975442608167
+      },
+      "best_cv_pr_auc": 0.6237179121383486,
+      "repeated_cv": {
+        "pr_auc": {
+          "mean": 0.6042121669064373,
+          "std": 0.05287074984845837
+        },
+        "roc_auc": {
+          "mean": 0.8171589436083158,
+          "std": 0.026125931969199125
+        },
+        "recall": {
+          "mean": 0.6719298245614035,
+          "std": 0.07117706236877473
+        },
+        "precision": {
+          "mean": 0.4292982655378905,
+          "std": 0.04142706670047973
+        },
+        "f1": {
+          "mean": 0.5215448651849045,
+          "std": 0.03786091224159767
+        },
+        "brier": {
+          "mean": 0.1468163381020228,
+          "std": 0.010643675012923159
+        }
+      }
+    },
+    "Neural Network (MLP)": {
+      "best_params": {
+        "alpha": 0.00012087541473056971,
+        "hidden_layer_sizes": [
+          32
+        ],
+        "learning_rate_init": 0.0027796975515266818
+      },
+      "best_cv_pr_auc": 0.6017696527135157,
+      "repeated_cv": {
+        "pr_auc": {
+          "mean": 0.5852083492387872,
+          "std": 0.04917906118122019
+        },
+        "roc_auc": {
+          "mean": 0.8000083657844811,
+          "std": 0.026740813340258726
+        },
+        "recall": {
+          "mean": 0.6105263157894737,
+          "std": 0.0713929471907923
+        },
+        "precision": {
+          "mean": 0.46456988358659734,
+          "std": 0.05889324723883464
+        },
+        "f1": {
+          "mean": 0.5253561748939874,
+          "std": 0.05336481953425325
+        },
+        "brier": {
+          "mean": 0.13155750038802272,
+          "std": 0.014475897459023715
+        }
+      }
+    }
+  },
+  "best_model": "Logistic Regression",
+  "test_evaluation": {
+    "threshold": 0.26,
+    "pr_auc": 0.6010459172499077,
+    "roc_auc": 0.7902489447842191,
+    "brier": 0.09796155770347008,
+    "recall": 0.574468085106383,
+    "precision": 0.5094339622641509,
+    "f1": 0.54,
+    "confusion_matrix": {
+      "tn": 221,
+      "fp": 26,
+      "fn": 20,
+      "tp": 27
+    },
+    "baseline_pr_auc": 0.1598639455782313
+  },
+  "test_evaluation_at_0.5": {
+    "threshold": 0.5,
+    "pr_auc": 0.6010459172499077,
+    "roc_auc": 0.7902489447842191,
+    "brier": 0.09796155770347008,
+    "recall": 0.3191489361702128,
+    "precision": 0.8333333333333334,
+    "f1": 0.46153846153846156,
+    "confusion_matrix": {
+      "tn": 244,
+      "fp": 3,
+      "fn": 32,
+      "tp": 15
+    },
+    "baseline_pr_auc": 0.1598639455782313
+  },
+  "roi_test": {
+    "cost_do_nothing": 2570448.0,
+    "cost_intervene_all": 3405804.8,
+    "cost_model_policy": 2309204.4,
+    "savings_vs_do_nothing": 261243.6000000001,
+    "savings_pct": 0.10163348957068966,
+    "employees_flagged": 53,
+    "intervention_spend": 202710.0
+  },
+  "fairness_test": [
+    {
+      "attribute": "Gender",
+      "group": "Female",
+      "n": 116,
+      "actual_attrition": 0.138,
+      "selection_rate": 0.19,
+      "recall": 0.562
+    },
+    {
+      "attribute": "Gender",
+      "group": "Male",
+      "n": 178,
+      "actual_attrition": 0.174,
+      "selection_rate": 0.174,
+      "recall": 0.581
+    },
+    {
+      "attribute": "AgeBand",
+      "group": "<30",
+      "n": 77,
+      "actual_attrition": 0.234,
+      "selection_rate": 0.299,
+      "recall": 0.667
+    },
+    {
+      "attribute": "AgeBand",
+      "group": "30-39",
+      "n": 126,
+      "actual_attrition": 0.111,
+      "selection_rate": 0.175,
+      "recall": 0.714
+    },
+    {
+      "attribute": "AgeBand",
+      "group": "40-49",
+      "n": 63,
+      "actual_attrition": 0.143,
+      "selection_rate": 0.127,
+      "recall": 0.556
+    },
+    {
+      "attribute": "AgeBand",
+      "group": "50+",
+      "n": 28,
+      "actual_attrition": 0.214,
+      "selection_rate": 0.0,
+      "recall": 0.0
+    }
+  ],
+  "error_analysis_test": [
+    {
+      "outcome": "false negative (missed)",
+      "count": 20,
+      "OverTime": 0.4,
+      "MonthlyIncome": 5877.35,
+      "YearsAtCompany": 10.15,
+      "JobLevel": 1.8,
+      "SatisfactionIndex": 2.712,
+      "YearsSinceLastPromotion": 3.45,
+      "DistanceFromHome": 9.25,
+      "p_leave": 0.106
+    },
+    {
+      "outcome": "false positive (false alarm)",
+      "count": 26,
+      "OverTime": 0.462,
+      "MonthlyIncome": 4078.962,
+      "YearsAtCompany": 3.231,
+      "JobLevel": 1.577,
+      "SatisfactionIndex": 2.587,
+      "YearsSinceLastPromotion": 0.962,
+      "DistanceFromHome": 8.115,
+      "p_leave": 0.383
+    },
+    {
+      "outcome": "true negative",
+      "count": 221,
+      "OverTime": 0.154,
+      "MonthlyIncome": 6983.163,
+      "YearsAtCompany": 7.43,
+      "JobLevel": 2.167,
+      "SatisfactionIndex": 2.767,
+      "YearsSinceLastPromotion": 2.344,
+      "DistanceFromHome": 8.425,
+      "p_leave": 0.081
+    },
+    {
+      "outcome": "true positive",
+      "count": 27,
+      "OverTime": 0.815,
+      "MonthlyIncome": 3579.889,
+      "YearsAtCompany": 3.037,
+      "JobLevel": 1.333,
+      "SatisfactionIndex": 2.491,
+      "YearsSinceLastPromotion": 1.37,
+      "DistanceFromHome": 9.259,
+      "p_leave": 0.561
+    }
+  ],
+  "shap_global_top10": {
+    "OverTime": 0.6527,
+    "YearsPerCompany": 0.4116,
+    "Department": 0.4111,
+    "SatisfactionIndex": 0.3819,
+    "JobRole": 0.333,
+    "StockOptionLevel": 0.3296,
+    "TotalWorkingYears": 0.3271,
+    "YearsSinceLastPromotion": 0.3158,
+    "BusinessTravel": 0.3079,
+    "ManagerTenureRatio": 0.2829
+  },
+  "segmentation": {
+    "k_selection": [
+      {
+        "k": 2,
+        "inertia": 14168.4383,
+        "silhouette": 0.2775
+      },
+      {
+        "k": 3,
+        "inertia": 12942.4216,
+        "silhouette": 0.1386
+      },
+      {
+        "k": 4,
+        "inertia": 12246.7108,
+        "silhouette": 0.1092
+      },
+      {
+        "k": 5,
+        "inertia": 11598.7259,
+        "silhouette": 0.1289
+      },
+      {
+        "k": 6,
+        "inertia": 11028.8036,
+        "silhouette": 0.122
+      },
+      {
+        "k": 7,
+        "inertia": 10607.5839,
+        "silhouette": 0.1098
+      },
+      {
+        "k": 8,
+        "inertia": 10178.746,
+        "silhouette": 0.1127
+      }
+    ],
+    "k_chosen": 3,
+    "silhouette_kmeans": 0.1386249706827222,
+    "agreement_kmeans_vs_hierarchical_ARI": 0.8119269358834974,
+    "dbscan_eps": 2.704724055689802,
+    "dbscan_outliers": 66,
+    "dbscan_clusters": 1,
+    "why_segments_silhouette": 0.09079679513255161,
+    "cluster_descriptions": {
+      "0": "WorkLifeBalance low, JobSatisfaction high, OverTime high",
+      "1": "TrainingTimesLastYear high, EnvironmentSatisfaction low, OverTime low",
+      "2": "YearsAtCompany high, JobLevel high, MonthlyIncome high"
+    }
+  },
+  "pay_model": {
+    "Ridge": {
+      "r2_mean": 0.8731561477535783,
+      "r2_std": 0.01251731350661562,
+      "rmse_log_mean": 0.23429624147670816,
+      "alpha": 0.8531678524172805,
+      "n_zero_coefs": 0,
+      "coefficients": {
+        "JobLevel": 0.3935,
+        "TotalWorkingYears": 0.064,
+        "Education": 0.0033,
+        "YearsAtCompany": 0.01,
+        "JobRole_Healthcare Representative": 0.1002,
+        "JobRole_Human Resources": -0.0719,
+        "JobRole_Laboratory Technician": -0.2453,
+        "JobRole_Manager": 0.2455,
+        "JobRole_Manufacturing Director": 0.073,
+        "JobRole_Research Director": 0.2931,
+        "JobRole_Research Scientist": -0.233,
+        "JobRole_Sales Executive": 0.1431,
+        "JobRole_Sales Representative": -0.3047,
+        "Department_Human Resources": -0.0369,
+        "Department_Research & Development": 0.0438,
+        "Department_Sales": -0.0069
+      }
+    },
+    "Lasso": {
+      "r2_mean": 0.873097411032685,
+      "r2_std": 0.012548842999733514,
+      "rmse_log_mean": 0.23435291383778592,
+      "alpha": 0.0001,
+      "n_zero_coefs": 2,
+      "coefficients": {
+        "JobLevel": 0.3926,
+        "TotalWorkingYears": 0.0635,
+        "Education": 0.0032,
+        "YearsAtCompany": 0.0099,
+        "JobRole_Healthcare Representative": 0.0265,
+        "JobRole_Human Resources": -0.1514,
+        "JobRole_Laboratory Technician": -0.3207,
+        "JobRole_Manager": 0.1727,
+        "JobRole_Manufacturing Director": 0.0,
+        "JobRole_Research Director": 0.2235,
+        "JobRole_Research Scientist": -0.3083,
+        "JobRole_Sales Executive": 0.0635,
+        "JobRole_Sales Representative": -0.3884,
+        "Department_Human Resources": -0.0298,
+        "Department_Research & Development": 0.0448,
+        "Department_Sales": 0.0
+      }
+    }
+  },
+  "macro_forecast": {
+    "status": "skipped - add JTSQUR.csv (see README)"
+  },
+  "recommender_cf": {
+    "rmse_svd": 0.959755794190444,
+    "rmse_item_mean_baseline": 1.0016435815066054,
+    "pairwise_ranking_svd": 0.5666666666666667,
+    "pairwise_ranking_item_mean": 0.51,
+    "pairwise_ranking_random": 0.5,
+    "n_test_ratings": 1201,
+    "data_note": "SIMULATED interaction matrix"
+  },
+  "rag_retrieval": {
+    "cosine": {
+      "hit_at_3": 0.9,
+      "mrr": 0.875
+    },
+    "euclidean": {
+      "hit_at_3": 0.9,
+      "mrr": 0.875
+    },
+    "n_questions": 20,
+    "embedding_backend": "tfidf"
+  }
+}

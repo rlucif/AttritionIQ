@@ -1,5 +1,5 @@
 {
-  "run_time": "2026-10-07 12:13:56",
+  "run_time": "2026-10-07 16:40:08",
   "fast_mode": false,
   "data": {
     "rows": 1470,
@@ -14,107 +14,158 @@
   "model_comparison": {
     "Logistic Regression": {
       "best_params": {
-        "C": 0.19069966103000435,
-        "l1_ratio": 0.7851759613930136
+        "C": 2.6373339933815254,
+        "l1_ratio": 0.4401524937396013
       },
-      "best_cv_pr_auc": 0.6429918276779276,
+      "best_cv_pr_auc": 0.6296009840054511,
       "repeated_cv": {
         "pr_auc": {
-          "mean": 0.6339950762325842,
-          "std": 0.055303646173325303
+          "mean": 0.6249983810183734,
+          "std": 0.05428767203060748,
+          "folds": [
+            0.6433891365135851,
+            0.4962531231745144,
+            0.6311082195749127,
+            0.7060106836763143,
+            0.6712437570879289,
+            0.6497254887783934,
+            0.6121058469207591,
+            0.575565430897082,
+            0.6549999351820733,
+            0.641467501138508,
+            0.6240567567488806,
+            0.655670346181574,
+            0.6825737774387327,
+            0.6028349677931998,
+            0.5279707441691401
+          ]
         },
         "roc_auc": {
-          "mean": 0.8351111075129243,
-          "std": 0.02848237494095489
+          "mean": 0.8271549766072875,
+          "std": 0.03048834009413381
         },
         "recall": {
-          "mean": 0.7385964912280704,
-          "std": 0.057226338351930126
+          "mean": 0.7368421052631577,
+          "std": 0.0809682860295742
         },
         "precision": {
-          "mean": 0.3798611322178412,
-          "std": 0.030600850659780833
+          "mean": 0.38008041049608604,
+          "std": 0.023640346254984207
         },
         "f1": {
-          "mean": 0.5006165880462514,
-          "std": 0.032571881066074754
+          "mean": 0.4996399977268879,
+          "std": 0.026849941153994708
         },
         "brier": {
-          "mean": 0.1552403222533821,
-          "std": 0.013128668142961937
+          "mean": 0.15711803695004262,
+          "std": 0.013324276203372301
         }
       }
     },
     "Random Forest": {
       "best_params": {
-        "max_depth": 14,
+        "max_depth": 12,
         "max_features": "sqrt",
-        "min_samples_leaf": 1,
-        "n_estimators": 513
+        "min_samples_leaf": 7,
+        "n_estimators": 400
       },
-      "best_cv_pr_auc": 0.5511288251143919,
+      "best_cv_pr_auc": 0.5414448385133627,
       "repeated_cv": {
         "pr_auc": {
-          "mean": 0.5327005447132311,
-          "std": 0.05117569324307076
+          "mean": 0.5253431890687061,
+          "std": 0.048607041489655764,
+          "folds": [
+            0.5568754595904347,
+            0.4453670047134781,
+            0.6080981088071212,
+            0.5716303117813012,
+            0.5252533076744783,
+            0.590012973723563,
+            0.510320647840943,
+            0.5292386616859143,
+            0.42853157903325234,
+            0.5357089868888347,
+            0.5279754017661139,
+            0.569547615627898,
+            0.49617362848276014,
+            0.5030338673963786,
+            0.4823802810181196
+          ]
         },
         "roc_auc": {
-          "mean": 0.7938849263855943,
-          "std": 0.025050222419452147
+          "mean": 0.7876557902472945,
+          "std": 0.027586242065327376
         },
         "recall": {
-          "mean": 0.15964912280701754,
-          "std": 0.04849219284591317
+          "mean": 0.387719298245614,
+          "std": 0.07472119101419947
         },
         "precision": {
-          "mean": 0.8455413105413104,
-          "std": 0.17815104027676126
+          "mean": 0.5384607823683543,
+          "std": 0.06510627643541575
         },
         "f1": {
-          "mean": 0.2646651574150558,
-          "std": 0.06930426109624102
+          "mean": 0.44726897611193295,
+          "std": 0.06524857950167369
         },
         "brier": {
-          "mean": 0.10877679324274982,
-          "std": 0.00397044274227789
+          "mean": 0.1302022846348995,
+          "std": 0.005271427672972745
         }
       }
     },
     "XGBoost": {
       "best_params": {
-        "colsample_bytree": 0.8058265802441404,
-        "learning_rate": 0.010243250407033817,
+        "colsample_bytree": 0.5499874579090014,
+        "learning_rate": 0.04768329952832197,
         "max_depth": 2,
-        "min_child_weight": 1,
-        "n_estimators": 574,
-        "reg_lambda": 1.6738085788752133,
-        "subsample": 0.6557975442608167
+        "min_child_weight": 4,
+        "n_estimators": 459,
+        "reg_lambda": 2.607024758370768,
+        "subsample": 0.608233797718321
       },
-      "best_cv_pr_auc": 0.6237179121383486,
+      "best_cv_pr_auc": 0.6133090148711103,
       "repeated_cv": {
         "pr_auc": {
-          "mean": 0.6042121669064373,
-          "std": 0.05287074984845837
+          "mean": 0.6060247394479785,
+          "std": 0.05505924928159103,
+          "folds": [
+            0.6219044611641997,
+            0.5080829259460596,
+            0.6221737905840928,
+            0.7201558937896345,
+            0.5942280028715647,
+            0.6489005110822852,
+            0.5288498791289898,
+            0.604149764776137,
+            0.5778365571949303,
+            0.6730079187331577,
+            0.5797753924999747,
+            0.6508908793697018,
+            0.6363033659938218,
+            0.5906717079119774,
+            0.5334400406731485
+          ]
         },
         "roc_auc": {
-          "mean": 0.8171589436083158,
-          "std": 0.026125931969199125
+          "mean": 0.8192614541532521,
+          "std": 0.027867794406003305
         },
         "recall": {
-          "mean": 0.6719298245614035,
-          "std": 0.07117706236877473
+          "mean": 0.631578947368421,
+          "std": 0.07687334140423385
         },
         "precision": {
-          "mean": 0.4292982655378905,
-          "std": 0.04142706670047973
+          "mean": 0.46268242125981235,
+          "std": 0.04597034037684073
         },
         "f1": {
-          "mean": 0.5215448651849045,
-          "std": 0.03786091224159767
+          "mean": 0.5320083529061506,
+          "std": 0.0479130398528375
         },
         "brier": {
-          "mean": 0.1468163381020228,
-          "std": 0.010643675012923159
+          "mean": 0.12765675286451975,
+          "std": 0.010410772306541503
         }
       }
     },
@@ -126,188 +177,1052 @@
         ],
         "learning_rate_init": 0.0027796975515266818
       },
-      "best_cv_pr_auc": 0.6017696527135157,
+      "best_cv_pr_auc": 0.6107342252916184,
       "repeated_cv": {
         "pr_auc": {
-          "mean": 0.5852083492387872,
-          "std": 0.04917906118122019
+          "mean": 0.5697142702707396,
+          "std": 0.06112704993236831,
+          "folds": [
+            0.6357842639631912,
+            0.5639848525753999,
+            0.6547576403916172,
+            0.5609806648086726,
+            0.6381637047192108,
+            0.6031031594794819,
+            0.6063956536930845,
+            0.571012987543717,
+            0.5778111882946012,
+            0.5926417228206802,
+            0.5330555082683963,
+            0.6015123247324411,
+            0.4895251462719547,
+            0.4977141197586526,
+            0.4192711167399922
+          ]
         },
         "roc_auc": {
-          "mean": 0.8000083657844811,
-          "std": 0.026740813340258726
+          "mean": 0.7981398273410029,
+          "std": 0.02954617500135293
         },
         "recall": {
-          "mean": 0.6105263157894737,
-          "std": 0.0713929471907923
+          "mean": 0.6105263157894736,
+          "std": 0.08764909471436347
         },
         "precision": {
-          "mean": 0.46456988358659734,
-          "std": 0.05889324723883464
+          "mean": 0.44645207898177397,
+          "std": 0.05544820505705567
         },
         "f1": {
-          "mean": 0.5253561748939874,
-          "std": 0.05336481953425325
+          "mean": 0.5129690810738096,
+          "std": 0.0576767625983559
         },
         "brier": {
-          "mean": 0.13155750038802272,
-          "std": 0.014475897459023715
+          "mean": 0.1354020995219151,
+          "std": 0.014014057348217162
         }
       }
     }
   },
+  "model_selection": {
+    "rule": "highest mean CV PR-AUC; models within 1 std of the best are tied; among tied, simplest wins (LR < RF < XGBoost < MLP)",
+    "highest_mean": "Logistic Regression",
+    "tolerance_1std": 0.05428767203060748,
+    "tied_with_best": [
+      "Logistic Regression",
+      "XGBoost"
+    ],
+    "chosen": "Logistic Regression",
+    "ranking": [
+      "Logistic Regression",
+      "XGBoost",
+      "Neural Network (MLP)",
+      "Random Forest"
+    ],
+    "best_vs_others_paired": {
+      "Random Forest": {
+        "mean_diff": 0.09965519194966715,
+        "folds_won": 15,
+        "folds": 15,
+        "p_corrected": 0.006471906146171129
+      },
+      "XGBoost": {
+        "mean_diff": 0.01897364157039486,
+        "folds_won": 10,
+        "folds": 15,
+        "p_corrected": 0.3921546609441133
+      },
+      "Neural Network (MLP)": {
+        "mean_diff": 0.05528411074763369,
+        "folds_won": 13,
+        "folds": 15,
+        "p_corrected": 0.16641102745918443
+      }
+    }
+  },
+  "nested_cv": {
+    "model": "Logistic Regression",
+    "outer_folds": 5,
+    "pr_auc": {
+      "mean": 0.6538497267901351,
+      "std": 0.05261886565038605,
+      "folds": [
+        0.7484880978346896,
+        0.6589427353005805,
+        0.6010001617640578,
+        0.652423999649907,
+        0.60839363940144
+      ]
+    },
+    "plain_repeated_cv_mean": 0.6249983810183734,
+    "optimism": -0.02885134577176174
+  },
   "best_model": "Logistic Regression",
+  "calibration": {
+    "oof_train": {
+      "uncalibrated": {
+        "brier": 0.15667480264269812,
+        "ece": 0.19584639854364164,
+        "mean_predicted": 0.35502672733252366,
+        "observed_rate": 0.16156462585034015
+      },
+      "calibrated": {
+        "brier": 0.09577270049221558,
+        "ece": 0.042199736910590556,
+        "mean_predicted": 0.16262809837098932,
+        "observed_rate": 0.16156462585034015
+      }
+    },
+    "test": {
+      "uncalibrated": {
+        "brier": 0.1587449490393635,
+        "ece": 0.19157368355604032,
+        "mean_predicted": 0.34164753081721416,
+        "observed_rate": 0.1598639455782313
+      },
+      "calibrated": {
+        "brier": 0.10266081837281392,
+        "ece": 0.04364544735361298,
+        "mean_predicted": 0.14778423489964504,
+        "observed_rate": 0.1598639455782313
+      }
+    }
+  },
+  "threshold": {
+    "cost_optimal_oof_train": 0.32,
+    "break_even_theory": 0.20833333333333331,
+    "assumptions": {
+      "replacement_multiplier": 1.0,
+      "intervention_months": 1.0,
+      "success_rate": 0.4
+    }
+  },
   "test_evaluation": {
-    "threshold": 0.26,
-    "pr_auc": 0.6010459172499077,
-    "roc_auc": 0.7902489447842191,
-    "brier": 0.09796155770347008,
-    "recall": 0.574468085106383,
-    "precision": 0.5094339622641509,
-    "f1": 0.54,
+    "threshold": 0.32,
+    "pr_auc": 0.5618242046352331,
+    "roc_auc": 0.7855973813420623,
+    "brier": 0.10266081837281392,
+    "recall": 0.40425531914893614,
+    "precision": 0.5277777777777778,
+    "f1": 0.4578313253012048,
     "confusion_matrix": {
-      "tn": 221,
-      "fp": 26,
-      "fn": 20,
-      "tp": 27
+      "tn": 230,
+      "fp": 17,
+      "fn": 28,
+      "tp": 19
     },
     "baseline_pr_auc": 0.1598639455782313
   },
   "test_evaluation_at_0.5": {
     "threshold": 0.5,
-    "pr_auc": 0.6010459172499077,
-    "roc_auc": 0.7902489447842191,
-    "brier": 0.09796155770347008,
-    "recall": 0.3191489361702128,
-    "precision": 0.8333333333333334,
-    "f1": 0.46153846153846156,
+    "pr_auc": 0.5618242046352331,
+    "roc_auc": 0.7855973813420623,
+    "brier": 0.10266081837281392,
+    "recall": 0.2765957446808511,
+    "precision": 0.8666666666666667,
+    "f1": 0.41935483870967744,
     "confusion_matrix": {
-      "tn": 244,
-      "fp": 3,
-      "fn": 32,
-      "tp": 15
+      "tn": 245,
+      "fp": 2,
+      "fn": 34,
+      "tp": 13
     },
     "baseline_pr_auc": 0.1598639455782313
   },
   "roi_test": {
     "cost_do_nothing": 2570448.0,
     "cost_intervene_all": 3405804.8,
-    "cost_model_policy": 2309204.4,
-    "savings_vs_do_nothing": 261243.6000000001,
-    "savings_pct": 0.10163348957068966,
-    "employees_flagged": 53,
-    "intervention_spend": 202710.0
+    "cost_model_policy": 2389315.8,
+    "savings_vs_do_nothing": 181132.2000000002,
+    "savings_pct": 0.07046717148139164,
+    "employees_flagged": 36,
+    "intervention_spend": 145767.0
   },
+  "test_ci95": {
+    "pr_auc": {
+      "low": 0.42470858783832105,
+      "high": 0.6873804639841926
+    },
+    "roc_auc": {
+      "low": 0.7054815892975697,
+      "high": 0.8611669382566056
+    },
+    "recall": {
+      "low": 0.26666666666666666,
+      "high": 0.5500255102040816
+    },
+    "precision": {
+      "low": 0.35714285714285715,
+      "high": 0.696969696969697
+    },
+    "savings_vs_do_nothing": {
+      "low": 43324.954999999645,
+      "high": 338188.5300000002
+    }
+  },
+  "roi_sensitivity": [
+    {
+      "replacement_multiplier": 0.5,
+      "success_rate": 0.2,
+      "intervention_months": 0.5,
+      "threshold": 0.43,
+      "break_even_threshold": 0.4167,
+      "flagged": 17,
+      "savings_vs_do_nothing": 32592.7,
+      "savings_pct": 0.0254
+    },
+    {
+      "replacement_multiplier": 0.5,
+      "success_rate": 0.2,
+      "intervention_months": 1.0,
+      "threshold": 0.65,
+      "break_even_threshold": 0.8333,
+      "flagged": 7,
+      "savings_vs_do_nothing": 4758.2,
+      "savings_pct": 0.0037
+    },
+    {
+      "replacement_multiplier": 0.5,
+      "success_rate": 0.2,
+      "intervention_months": 2.0,
+      "threshold": 0.91,
+      "break_even_threshold": 1.6667,
+      "flagged": 2,
+      "savings_vs_do_nothing": -2633.6,
+      "savings_pct": -0.002
+    },
+    {
+      "replacement_multiplier": 0.5,
+      "success_rate": 0.4,
+      "intervention_months": 0.5,
+      "threshold": 0.32,
+      "break_even_threshold": 0.2083,
+      "flagged": 36,
+      "savings_vs_do_nothing": 90566.1,
+      "savings_pct": 0.0705
+    },
+    {
+      "replacement_multiplier": 0.5,
+      "success_rate": 0.4,
+      "intervention_months": 1.0,
+      "threshold": 0.43,
+      "break_even_threshold": 0.4167,
+      "flagged": 17,
+      "savings_vs_do_nothing": 65185.4,
+      "savings_pct": 0.0507
+    },
+    {
+      "replacement_multiplier": 0.5,
+      "success_rate": 0.4,
+      "intervention_months": 2.0,
+      "threshold": 0.65,
+      "break_even_threshold": 0.8333,
+      "flagged": 7,
+      "savings_vs_do_nothing": 9516.4,
+      "savings_pct": 0.0074
+    },
+    {
+      "replacement_multiplier": 0.5,
+      "success_rate": 0.6,
+      "intervention_months": 0.5,
+      "threshold": 0.28,
+      "break_even_threshold": 0.1389,
+      "flagged": 49,
+      "savings_vs_do_nothing": 173234.5,
+      "savings_pct": 0.1348
+    },
+    {
+      "replacement_multiplier": 0.5,
+      "success_rate": 0.6,
+      "intervention_months": 1.0,
+      "threshold": 0.35,
+      "break_even_threshold": 0.2778,
+      "flagged": 30,
+      "savings_vs_do_nothing": 123350.4,
+      "savings_pct": 0.096
+    },
+    {
+      "replacement_multiplier": 0.5,
+      "success_rate": 0.6,
+      "intervention_months": 2.0,
+      "threshold": 0.53,
+      "break_even_threshold": 0.5556,
+      "flagged": 14,
+      "savings_vs_do_nothing": 77443.2,
+      "savings_pct": 0.0603
+    },
+    {
+      "replacement_multiplier": 1.0,
+      "success_rate": 0.2,
+      "intervention_months": 0.5,
+      "threshold": 0.32,
+      "break_even_threshold": 0.2083,
+      "flagged": 36,
+      "savings_vs_do_nothing": 90566.1,
+      "savings_pct": 0.0352
+    },
+    {
+      "replacement_multiplier": 1.0,
+      "success_rate": 0.2,
+      "intervention_months": 1.0,
+      "threshold": 0.43,
+      "break_even_threshold": 0.4167,
+      "flagged": 17,
+      "savings_vs_do_nothing": 65185.4,
+      "savings_pct": 0.0254
+    },
+    {
+      "replacement_multiplier": 1.0,
+      "success_rate": 0.2,
+      "intervention_months": 2.0,
+      "threshold": 0.65,
+      "break_even_threshold": 0.8333,
+      "flagged": 7,
+      "savings_vs_do_nothing": 9516.4,
+      "savings_pct": 0.0037
+    },
+    {
+      "replacement_multiplier": 1.0,
+      "success_rate": 0.4,
+      "intervention_months": 0.5,
+      "threshold": 0.17,
+      "break_even_threshold": 0.1042,
+      "flagged": 92,
+      "savings_vs_do_nothing": 338997.7,
+      "savings_pct": 0.1319
+    },
+    {
+      "replacement_multiplier": 1.0,
+      "success_rate": 0.4,
+      "intervention_months": 1.0,
+      "threshold": 0.32,
+      "break_even_threshold": 0.2083,
+      "flagged": 36,
+      "savings_vs_do_nothing": 181132.2,
+      "savings_pct": 0.0705
+    },
+    {
+      "replacement_multiplier": 1.0,
+      "success_rate": 0.4,
+      "intervention_months": 2.0,
+      "threshold": 0.43,
+      "break_even_threshold": 0.4167,
+      "flagged": 17,
+      "savings_vs_do_nothing": 130370.8,
+      "savings_pct": 0.0507
+    },
+    {
+      "replacement_multiplier": 1.0,
+      "success_rate": 0.6,
+      "intervention_months": 0.5,
+      "threshold": 0.11,
+      "break_even_threshold": 0.0694,
+      "flagged": 126,
+      "savings_vs_do_nothing": 591350.7,
+      "savings_pct": 0.2301
+    },
+    {
+      "replacement_multiplier": 1.0,
+      "success_rate": 0.6,
+      "intervention_months": 1.0,
+      "threshold": 0.28,
+      "break_even_threshold": 0.1389,
+      "flagged": 49,
+      "savings_vs_do_nothing": 346469.0,
+      "savings_pct": 0.1348
+    },
+    {
+      "replacement_multiplier": 1.0,
+      "success_rate": 0.6,
+      "intervention_months": 2.0,
+      "threshold": 0.35,
+      "break_even_threshold": 0.2778,
+      "flagged": 30,
+      "savings_vs_do_nothing": 246700.8,
+      "savings_pct": 0.096
+    },
+    {
+      "replacement_multiplier": 2.0,
+      "success_rate": 0.2,
+      "intervention_months": 0.5,
+      "threshold": 0.17,
+      "break_even_threshold": 0.1042,
+      "flagged": 92,
+      "savings_vs_do_nothing": 338997.7,
+      "savings_pct": 0.0659
+    },
+    {
+      "replacement_multiplier": 2.0,
+      "success_rate": 0.2,
+      "intervention_months": 1.0,
+      "threshold": 0.32,
+      "break_even_threshold": 0.2083,
+      "flagged": 36,
+      "savings_vs_do_nothing": 181132.2,
+      "savings_pct": 0.0352
+    },
+    {
+      "replacement_multiplier": 2.0,
+      "success_rate": 0.2,
+      "intervention_months": 2.0,
+      "threshold": 0.43,
+      "break_even_threshold": 0.4167,
+      "flagged": 17,
+      "savings_vs_do_nothing": 130370.8,
+      "savings_pct": 0.0254
+    },
+    {
+      "replacement_multiplier": 2.0,
+      "success_rate": 0.4,
+      "intervention_months": 0.5,
+      "threshold": 0.06,
+      "break_even_threshold": 0.0521,
+      "flagged": 179,
+      "savings_vs_do_nothing": 1318281.6,
+      "savings_pct": 0.2564
+    },
+    {
+      "replacement_multiplier": 2.0,
+      "success_rate": 0.4,
+      "intervention_months": 1.0,
+      "threshold": 0.17,
+      "break_even_threshold": 0.1042,
+      "flagged": 92,
+      "savings_vs_do_nothing": 677995.4,
+      "savings_pct": 0.1319
+    },
+    {
+      "replacement_multiplier": 2.0,
+      "success_rate": 0.4,
+      "intervention_months": 2.0,
+      "threshold": 0.32,
+      "break_even_threshold": 0.2083,
+      "flagged": 36,
+      "savings_vs_do_nothing": 362264.4,
+      "savings_pct": 0.0705
+    },
+    {
+      "replacement_multiplier": 2.0,
+      "success_rate": 0.6,
+      "intervention_months": 0.5,
+      "threshold": 0.06,
+      "break_even_threshold": 0.0347,
+      "flagged": 179,
+      "savings_vs_do_nothing": 2212454.4,
+      "savings_pct": 0.4304
+    },
+    {
+      "replacement_multiplier": 2.0,
+      "success_rate": 0.6,
+      "intervention_months": 1.0,
+      "threshold": 0.11,
+      "break_even_threshold": 0.0694,
+      "flagged": 126,
+      "savings_vs_do_nothing": 1182701.4,
+      "savings_pct": 0.2301
+    },
+    {
+      "replacement_multiplier": 2.0,
+      "success_rate": 0.6,
+      "intervention_months": 2.0,
+      "threshold": 0.28,
+      "break_even_threshold": 0.1389,
+      "flagged": 49,
+      "savings_vs_do_nothing": 692938.0,
+      "savings_pct": 0.1348
+    }
+  ],
   "fairness_test": [
     {
       "attribute": "Gender",
       "group": "Female",
       "n": 116,
+      "leavers": 16,
       "actual_attrition": 0.138,
-      "selection_rate": 0.19,
-      "recall": 0.562
+      "mean_predicted": 0.157,
+      "selection_rate": 0.147,
+      "recall": 0.5,
+      "recall_ci_low": 0.28,
+      "recall_ci_high": 0.72
     },
     {
       "attribute": "Gender",
       "group": "Male",
       "n": 178,
+      "leavers": 31,
       "actual_attrition": 0.174,
-      "selection_rate": 0.174,
-      "recall": 0.581
+      "mean_predicted": 0.142,
+      "selection_rate": 0.107,
+      "recall": 0.355,
+      "recall_ci_low": 0.211,
+      "recall_ci_high": 0.531
     },
     {
       "attribute": "AgeBand",
       "group": "<30",
-      "n": 77,
-      "actual_attrition": 0.234,
-      "selection_rate": 0.299,
-      "recall": 0.667
+      "n": 68,
+      "leavers": 17,
+      "actual_attrition": 0.25,
+      "mean_predicted": 0.214,
+      "selection_rate": 0.235,
+      "recall": 0.529,
+      "recall_ci_low": 0.31,
+      "recall_ci_high": 0.738
     },
     {
       "attribute": "AgeBand",
       "group": "30-39",
-      "n": 126,
-      "actual_attrition": 0.111,
-      "selection_rate": 0.175,
-      "recall": 0.714
+      "n": 125,
+      "leavers": 14,
+      "actual_attrition": 0.112,
+      "mean_predicted": 0.137,
+      "selection_rate": 0.08,
+      "recall": 0.429,
+      "recall_ci_low": 0.214,
+      "recall_ci_high": 0.674
     },
     {
       "attribute": "AgeBand",
       "group": "40-49",
-      "n": 63,
-      "actual_attrition": 0.143,
-      "selection_rate": 0.127,
-      "recall": 0.556
+      "n": 67,
+      "leavers": 8,
+      "actual_attrition": 0.119,
+      "mean_predicted": 0.123,
+      "selection_rate": 0.104,
+      "recall": 0.375,
+      "recall_ci_low": 0.137,
+      "recall_ci_high": 0.694
     },
     {
       "attribute": "AgeBand",
       "group": "50+",
-      "n": 28,
-      "actual_attrition": 0.214,
-      "selection_rate": 0.0,
-      "recall": 0.0
+      "n": 34,
+      "leavers": 8,
+      "actual_attrition": 0.235,
+      "mean_predicted": 0.104,
+      "selection_rate": 0.088,
+      "recall": 0.125,
+      "recall_ci_low": 0.022,
+      "recall_ci_high": 0.471
+    }
+  ],
+  "fairness_oof_train": [
+    {
+      "attribute": "Gender",
+      "group": "Female",
+      "n": 472,
+      "leavers": 71,
+      "actual_attrition": 0.15,
+      "mean_predicted": 0.167,
+      "selection_rate": 0.165,
+      "recall": 0.606,
+      "recall_ci_low": 0.489,
+      "recall_ci_high": 0.711
+    },
+    {
+      "attribute": "Gender",
+      "group": "Male",
+      "n": 704,
+      "leavers": 119,
+      "actual_attrition": 0.169,
+      "mean_predicted": 0.16,
+      "selection_rate": 0.155,
+      "recall": 0.563,
+      "recall_ci_low": 0.473,
+      "recall_ci_high": 0.649
+    },
+    {
+      "attribute": "AgeBand",
+      "group": "<30",
+      "n": 258,
+      "leavers": 74,
+      "actual_attrition": 0.287,
+      "mean_predicted": 0.23,
+      "selection_rate": 0.267,
+      "recall": 0.689,
+      "recall_ci_low": 0.577,
+      "recall_ci_high": 0.783
+    },
+    {
+      "attribute": "AgeBand",
+      "group": "30-39",
+      "n": 497,
+      "leavers": 75,
+      "actual_attrition": 0.151,
+      "mean_predicted": 0.155,
+      "selection_rate": 0.143,
+      "recall": 0.56,
+      "recall_ci_low": 0.447,
+      "recall_ci_high": 0.667
+    },
+    {
+      "attribute": "AgeBand",
+      "group": "40-49",
+      "n": 282,
+      "leavers": 26,
+      "actual_attrition": 0.092,
+      "mean_predicted": 0.137,
+      "selection_rate": 0.121,
+      "recall": 0.423,
+      "recall_ci_low": 0.255,
+      "recall_ci_high": 0.611
+    },
+    {
+      "attribute": "AgeBand",
+      "group": "50+",
+      "n": 139,
+      "leavers": 15,
+      "actual_attrition": 0.108,
+      "mean_predicted": 0.117,
+      "selection_rate": 0.094,
+      "recall": 0.4,
+      "recall_ci_low": 0.198,
+      "recall_ci_high": 0.643
     }
   ],
   "error_analysis_test": [
     {
       "outcome": "false negative (missed)",
-      "count": 20,
-      "OverTime": 0.4,
-      "MonthlyIncome": 5877.35,
-      "YearsAtCompany": 10.15,
-      "JobLevel": 1.8,
-      "SatisfactionIndex": 2.712,
-      "YearsSinceLastPromotion": 3.45,
-      "DistanceFromHome": 9.25,
-      "p_leave": 0.106
+      "count": 28,
+      "OverTime": 0.5,
+      "MonthlyIncome": 5217.857,
+      "YearsAtCompany": 8.0,
+      "JobLevel": 1.679,
+      "SatisfactionIndex": 2.67,
+      "YearsSinceLastPromotion": 2.714,
+      "DistanceFromHome": 8.75,
+      "p_leave": 0.152
     },
     {
       "outcome": "false positive (false alarm)",
-      "count": 26,
-      "OverTime": 0.462,
-      "MonthlyIncome": 4078.962,
-      "YearsAtCompany": 3.231,
-      "JobLevel": 1.577,
-      "SatisfactionIndex": 2.587,
-      "YearsSinceLastPromotion": 0.962,
-      "DistanceFromHome": 8.115,
-      "p_leave": 0.383
+      "count": 17,
+      "OverTime": 0.294,
+      "MonthlyIncome": 4568.412,
+      "YearsAtCompany": 3.647,
+      "JobLevel": 1.647,
+      "SatisfactionIndex": 2.618,
+      "YearsSinceLastPromotion": 1.765,
+      "DistanceFromHome": 9.235,
+      "p_leave": 0.397
     },
     {
       "outcome": "true negative",
-      "count": 221,
-      "OverTime": 0.154,
-      "MonthlyIncome": 6983.163,
-      "YearsAtCompany": 7.43,
-      "JobLevel": 2.167,
-      "SatisfactionIndex": 2.767,
-      "YearsSinceLastPromotion": 2.344,
-      "DistanceFromHome": 8.425,
-      "p_leave": 0.081
+      "count": 230,
+      "OverTime": 0.178,
+      "MonthlyIncome": 6833.343,
+      "YearsAtCompany": 7.235,
+      "JobLevel": 2.139,
+      "SatisfactionIndex": 2.758,
+      "YearsSinceLastPromotion": 2.23,
+      "DistanceFromHome": 8.33,
+      "p_leave": 0.092
     },
     {
       "outcome": "true positive",
-      "count": 27,
-      "OverTime": 0.815,
-      "MonthlyIncome": 3579.889,
-      "YearsAtCompany": 3.037,
-      "JobLevel": 1.333,
-      "SatisfactionIndex": 2.491,
-      "YearsSinceLastPromotion": 1.37,
-      "DistanceFromHome": 9.259,
-      "p_leave": 0.561
+      "count": 19,
+      "OverTime": 0.842,
+      "MonthlyIncome": 3584.421,
+      "YearsAtCompany": 3.211,
+      "JobLevel": 1.316,
+      "SatisfactionIndex": 2.461,
+      "YearsSinceLastPromotion": 1.579,
+      "DistanceFromHome": 10.0,
+      "p_leave": 0.598
+    }
+  ],
+  "error_analysis_oof_train": [
+    {
+      "outcome": "false negative (missed)",
+      "count": 80,
+      "OverTime": 0.338,
+      "MonthlyIncome": 6020.088,
+      "YearsAtCompany": 6.5,
+      "JobLevel": 1.962,
+      "SatisfactionIndex": 2.644,
+      "YearsSinceLastPromotion": 2.55,
+      "DistanceFromHome": 10.2,
+      "p_leave": 0.151
+    },
+    {
+      "outcome": "false positive (false alarm)",
+      "count": 77,
+      "OverTime": 0.506,
+      "MonthlyIncome": 5303.883,
+      "YearsAtCompany": 6.247,
+      "JobLevel": 1.818,
+      "SatisfactionIndex": 2.558,
+      "YearsSinceLastPromotion": 3.013,
+      "DistanceFromHome": 10.455,
+      "p_leave": 0.415
+    },
+    {
+      "outcome": "true negative",
+      "count": 909,
+      "OverTime": 0.224,
+      "MonthlyIncome": 7004.441,
+      "YearsAtCompany": 7.568,
+      "JobLevel": 2.185,
+      "SatisfactionIndex": 2.789,
+      "YearsSinceLastPromotion": 2.178,
+      "DistanceFromHome": 8.927,
+      "p_leave": 0.097
+    },
+    {
+      "outcome": "true positive",
+      "count": 110,
+      "OverTime": 0.636,
+      "MonthlyIncome": 3988.455,
+      "YearsAtCompany": 3.736,
+      "JobLevel": 1.445,
+      "SatisfactionIndex": 2.461,
+      "YearsSinceLastPromotion": 1.373,
+      "DistanceFromHome": 11.536,
+      "p_leave": 0.536
     }
   ],
   "shap_global_top10": {
-    "OverTime": 0.6527,
-    "YearsPerCompany": 0.4116,
-    "Department": 0.4111,
-    "SatisfactionIndex": 0.3819,
-    "JobRole": 0.333,
-    "StockOptionLevel": 0.3296,
-    "TotalWorkingYears": 0.3271,
-    "YearsSinceLastPromotion": 0.3158,
-    "BusinessTravel": 0.3079,
-    "ManagerTenureRatio": 0.2829
+    "JobRole": 1.7469,
+    "MonthlyIncome": 1.1864,
+    "TotalWorkingYears": 0.8133,
+    "OverTime": 0.7047,
+    "EnvironmentSatisfaction": 0.4275,
+    "PayGapPct": 0.3962,
+    "NumCompaniesWorked": 0.3804,
+    "StockOptionLevel": 0.3667,
+    "YearsSinceLastPromotion": 0.3406,
+    "BusinessTravel": 0.3327
+  },
+  "shap_individual_examples": {
+    "caught_leaver": {
+      "employee": 478,
+      "p_leave": 0.9328639137294912,
+      "drivers": [
+        {
+          "feature": "JobRole",
+          "shap": 1.792,
+          "direction": "raises risk"
+        },
+        {
+          "feature": "MonthlyIncome",
+          "shap": -1.355,
+          "direction": "lowers risk"
+        },
+        {
+          "feature": "TotalWorkingYears",
+          "shap": 1.085,
+          "direction": "raises risk"
+        },
+        {
+          "feature": "OverTime",
+          "shap": 1.015,
+          "direction": "raises risk"
+        },
+        {
+          "feature": "BusinessTravel",
+          "shap": 0.669,
+          "direction": "raises risk"
+        }
+      ]
+    },
+    "missed_leaver": {
+      "employee": 1082,
+      "p_leave": 0.14753708365058898,
+      "drivers": [
+        {
+          "feature": "BusinessTravel",
+          "shap": -1.003,
+          "direction": "lowers risk"
+        },
+        {
+          "feature": "JobRole",
+          "shap": -0.774,
+          "direction": "lowers risk"
+        },
+        {
+          "feature": "MonthlyIncome",
+          "shap": 0.69,
+          "direction": "raises risk"
+        },
+        {
+          "feature": "OverTime",
+          "shap": -0.596,
+          "direction": "lowers risk"
+        },
+        {
+          "feature": "DistanceFromHome",
+          "shap": 0.596,
+          "direction": "raises risk"
+        }
+      ]
+    },
+    "false_alarm": {
+      "employee": 411,
+      "p_leave": 0.6094395078823521,
+      "drivers": [
+        {
+          "feature": "JobRole",
+          "shap": 1.792,
+          "direction": "raises risk"
+        },
+        {
+          "feature": "MonthlyIncome",
+          "shap": -1.66,
+          "direction": "lowers risk"
+        },
+        {
+          "feature": "TotalWorkingYears",
+          "shap": 1.497,
+          "direction": "raises risk"
+        },
+        {
+          "feature": "PayGapPct",
+          "shap": 1.12,
+          "direction": "raises risk"
+        },
+        {
+          "feature": "EnvironmentSatisfaction",
+          "shap": -0.634,
+          "direction": "lowers risk"
+        }
+      ]
+    }
+  },
+  "fairness_50plus": {
+    "leavers_50plus_train": 15,
+    "mean_oof_p_leavers_50plus": 0.2932552917869342,
+    "mean_oof_p_leavers_under50": 0.3809473637710448,
+    "shap_gap_vs_younger_leavers": [
+      {
+        "feature": "MonthlyIncome",
+        "group_mean_shap": 0.9501,
+        "reference_mean_shap": -0.6477,
+        "gap": 1.5978
+      },
+      {
+        "feature": "TotalWorkingYears",
+        "group_mean_shap": -0.9886,
+        "reference_mean_shap": 0.5106,
+        "gap": -1.4993
+      },
+      {
+        "feature": "JobRole",
+        "group_mean_shap": -0.1869,
+        "reference_mean_shap": 0.7598,
+        "gap": -0.9467
+      },
+      {
+        "feature": "NumCompaniesWorked",
+        "group_mean_shap": 0.4819,
+        "reference_mean_shap": 0.0206,
+        "gap": 0.4613
+      },
+      {
+        "feature": "YearsSinceLastPromotion",
+        "group_mean_shap": 0.2945,
+        "reference_mean_shap": -0.082,
+        "gap": 0.3765
+      },
+      {
+        "feature": "JobLevel",
+        "group_mean_shap": -0.2026,
+        "reference_mean_shap": 0.1221,
+        "gap": -0.3247
+      },
+      {
+        "feature": "YearsWithCurrManager",
+        "group_mean_shap": -0.065,
+        "reference_mean_shap": 0.119,
+        "gap": -0.184
+      },
+      {
+        "feature": "OverTime",
+        "group_mean_shap": 0.3707,
+        "reference_mean_shap": 0.2142,
+        "gap": 0.1566
+      }
+    ]
+  },
+  "sensitive_counterfactual": {
+    "note": "Same model and hyperparameters with Gender, Age, MaritalStatus included. Out-of-fold on train. Shown to quantify the trade-off; the deployed model excludes them.",
+    "oof_pr_auc_excluded": 0.6289579924609072,
+    "oof_pr_auc_included": 0.6356957024720286,
+    "threshold_excluded": 0.32,
+    "threshold_included": 0.34,
+    "fairness_excluded": [
+      {
+        "attribute": "Gender",
+        "group": "Female",
+        "n": 472,
+        "leavers": 71,
+        "actual_attrition": 0.15,
+        "mean_predicted": 0.167,
+        "selection_rate": 0.165,
+        "recall": 0.606,
+        "recall_ci_low": 0.489,
+        "recall_ci_high": 0.711
+      },
+      {
+        "attribute": "Gender",
+        "group": "Male",
+        "n": 704,
+        "leavers": 119,
+        "actual_attrition": 0.169,
+        "mean_predicted": 0.16,
+        "selection_rate": 0.155,
+        "recall": 0.563,
+        "recall_ci_low": 0.473,
+        "recall_ci_high": 0.649
+      },
+      {
+        "attribute": "AgeBand",
+        "group": "<30",
+        "n": 258,
+        "leavers": 74,
+        "actual_attrition": 0.287,
+        "mean_predicted": 0.23,
+        "selection_rate": 0.267,
+        "recall": 0.689,
+        "recall_ci_low": 0.577,
+        "recall_ci_high": 0.783
+      },
+      {
+        "attribute": "AgeBand",
+        "group": "30-39",
+        "n": 497,
+        "leavers": 75,
+        "actual_attrition": 0.151,
+        "mean_predicted": 0.155,
+        "selection_rate": 0.143,
+        "recall": 0.56,
+        "recall_ci_low": 0.447,
+        "recall_ci_high": 0.667
+      },
+      {
+        "attribute": "AgeBand",
+        "group": "40-49",
+        "n": 282,
+        "leavers": 26,
+        "actual_attrition": 0.092,
+        "mean_predicted": 0.137,
+        "selection_rate": 0.121,
+        "recall": 0.423,
+        "recall_ci_low": 0.255,
+        "recall_ci_high": 0.611
+      },
+      {
+        "attribute": "AgeBand",
+        "group": "50+",
+        "n": 139,
+        "leavers": 15,
+        "actual_attrition": 0.108,
+        "mean_predicted": 0.117,
+        "selection_rate": 0.094,
+        "recall": 0.4,
+        "recall_ci_low": 0.198,
+        "recall_ci_high": 0.643
+      }
+    ],
+    "fairness_included": [
+      {
+        "attribute": "Gender",
+        "group": "Female",
+        "n": 472,
+        "leavers": 71,
+        "actual_attrition": 0.15,
+        "mean_predicted": 0.15,
+        "selection_rate": 0.11,
+        "recall": 0.507,
+        "recall_ci_low": 0.393,
+        "recall_ci_high": 0.62
+      },
+      {
+        "attribute": "Gender",
+        "group": "Male",
+        "n": 704,
+        "leavers": 119,
+        "actual_attrition": 0.169,
+        "mean_predicted": 0.171,
+        "selection_rate": 0.165,
+        "recall": 0.58,
+        "recall_ci_low": 0.49,
+        "recall_ci_high": 0.665
+      },
+      {
+        "attribute": "AgeBand",
+        "group": "<30",
+        "n": 258,
+        "leavers": 74,
+        "actual_attrition": 0.287,
+        "mean_predicted": 0.246,
+        "selection_rate": 0.271,
+        "recall": 0.676,
+        "recall_ci_low": 0.563,
+        "recall_ci_high": 0.771
+      },
+      {
+        "attribute": "AgeBand",
+        "group": "30-39",
+        "n": 497,
+        "leavers": 75,
+        "actual_attrition": 0.151,
+        "mean_predicted": 0.155,
+        "selection_rate": 0.131,
+        "recall": 0.52,
+        "recall_ci_low": 0.409,
+        "recall_ci_high": 0.629
+      },
+      {
+        "attribute": "AgeBand",
+        "group": "40-49",
+        "n": 282,
+        "leavers": 26,
+        "actual_attrition": 0.092,
+        "mean_predicted": 0.128,
+        "selection_rate": 0.085,
+        "recall": 0.385,
+        "recall_ci_low": 0.224,
+        "recall_ci_high": 0.575
+      },
+      {
+        "attribute": "AgeBand",
+        "group": "50+",
+        "n": 139,
+        "leavers": 15,
+        "actual_attrition": 0.108,
+        "mean_predicted": 0.101,
+        "selection_rate": 0.065,
+        "recall": 0.4,
+        "recall_ci_low": 0.198,
+        "recall_ci_high": 0.643
+      }
+    ]
+  },
+  "missed_leavers": {
+    "test": 28,
+    "oof_train": 80,
+    "files": [
+      "reports/missed_leavers_test.csv",
+      "reports/missed_leavers_oof_train.csv"
+    ]
   },
   "segmentation": {
     "k_selection": [
@@ -353,7 +1268,7 @@
     "dbscan_eps": 2.704724055689802,
     "dbscan_outliers": 66,
     "dbscan_clusters": 1,
-    "why_segments_silhouette": 0.09079679513255161,
+    "why_segments_silhouette": 0.07840359935126091,
     "cluster_descriptions": {
       "0": "WorkLifeBalance low, JobSatisfaction high, OverTime high",
       "1": "TrainingTimesLastYear high, EnvironmentSatisfaction low, OverTime low",
@@ -363,8 +1278,8 @@
   "pay_model": {
     "Ridge": {
       "r2_mean": 0.8731561477535783,
-      "r2_std": 0.01251731350661562,
-      "rmse_log_mean": 0.23429624147670816,
+      "r2_std": 0.012517313506615408,
+      "rmse_log_mean": 0.2342962414767083,
       "alpha": 0.8531678524172805,
       "n_zero_coefs": 0,
       "coefficients": {
@@ -387,8 +1302,8 @@
       }
     },
     "Lasso": {
-      "r2_mean": 0.873097411032685,
-      "r2_std": 0.012548842999733514,
+      "r2_mean": 0.8730974110326848,
+      "r2_std": 0.012548842999733486,
       "rmse_log_mean": 0.23435291383778592,
       "alpha": 0.0001,
       "n_zero_coefs": 2,

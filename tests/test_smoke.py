@@ -62,3 +62,55 @@ def test_rag_retrieves_right_section():
     r = rag.Retriever(rag.load_chunks(), prefer_transformer=False)
     hits = r.retrieve("Can she work from home because of a long commute?", k=3)
     assert "Flexible and Remote Work" in hits.section.tolist()
+
+
+# --------------------------------------------------------------------------
+# Phase 2: risk-model decision logic
+# --------------------------------------------------------------------------
+def _cv(mean, std, folds):
+    return {"repeated_cv": {"pr_auc": {"mean": mean, "std": std, "folds": folds}}}
+
+
+def test_select_model_prefers_simplest_when_tied():
+    from src.model import select_model
+    comp = {
+        "XGBoost": _cv(0.64, 0.05, [0.64] * 15),
+        "Logistic Regression": _cv(0.62, 0.05, [0.62] * 15),   # within 1 std of best
+        "Random Forest": _cv(0.50, 0.05, [0.50] * 15),          # clearly worse
+    }
+    chosen, info = select_model(comp)
+    assert info["highest_mean"] == "XGBoost"
+    assert chosen == "Logistic Regression"
+    assert "Random Forest" not in info["tied_with_best"]
+
+
+def test_select_model_keeps_clear_winner():
+    from src.model import select_model
+    comp = {"XGBoost": _cv(0.70, 0.02, [0.70] * 15),
+            "Logistic Regression": _cv(0.60, 0.02, [0.60] * 15)}
+    assert select_model(comp)[0] == "XGBoost"
+
+
+def test_break_even_threshold_matches_cost_model():
+    # 1 month intervention, replacement = 12 months, 40% success -> 1/4.8
+    assert roi.break_even_threshold(1.0, 1.0, 0.4) == pytest.approx(1 / 4.8)
+    # at exactly p*, flagging and not flagging cost the same for one person
+    p, R, C, s = roi.break_even_threshold(1.0, 1.0, 0.4), 1200.0, 100.0, 0.4
+    assert p * R == pytest.approx(C + p * R * (1 - s))
+
+
+def test_wilson_interval_and_ece():
+    from src.model import expected_calibration_error, wilson_interval
+    lo, hi = wilson_interval(0, 6)          # 0 of 6 caught: CI must not collapse to [0, 0]
+    assert lo == 0 and hi > 0.3
+    y = np.array([0, 1] * 50)
+    assert expected_calibration_error(y, np.full(100, 0.5)) == pytest.approx(0.0)
+
+
+def test_fairness_age_bands_match_labels():
+    from src.model import fairness_report
+    d = pd.DataFrame({config.TARGET: [1, 1, 1, 1], "Gender": [1, 0, 1, 0], "Age": [29, 30, 49, 50]})
+    r = fairness_report(d, np.array([0.9, 0.9, 0.9, 0.9]), 0.5)
+    bands = r[r.attribute == "AgeBand"].set_index("group").n
+    assert bands["<30"] == 1 and bands["30-39"] == 1 and bands["40-49"] == 1 and bands["50+"] == 1
+

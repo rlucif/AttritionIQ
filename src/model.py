@@ -10,6 +10,11 @@ Steps (all called from train.py):
     6. evaluate         final, one-time check on the held-out test set
     7. explain          SHAP values per employee
     8. fairness_report  recall and selection rate by gender / age band
+    9. error analysis   group profiles + one row per missed leaver with SHAP drivers
+
+Phase 2 additions: per-fold scores and paired tests (compare_models), the
+model-selection rule (select_model), nested CV for the chosen model
+(nested_cv), expected calibration error, and bootstrap confidence intervals.
 """
 from __future__ import annotations
 
@@ -18,6 +23,7 @@ import pandas as pd
 import shap
 from imblearn.over_sampling import SMOTE
 from imblearn.pipeline import Pipeline as ImbPipeline
+from scipy import stats
 from scipy.stats import loguniform, randint, uniform
 from sklearn.base import clone
 from sklearn.calibration import CalibratedClassifierCV
@@ -117,7 +123,70 @@ def repeated_cv(estimator, X, y) -> dict:
     for k in scoring:
         vals = s[f"test_{k}"] * (-1 if k == "brier" else 1)
         out[k] = {"mean": float(vals.mean()), "std": float(vals.std())}
+    # Same random_state -> every model sees the SAME 15 folds, so the per-fold
+    # scores can be compared pairwise (compare_models).
+    out["pr_auc"]["folds"] = [float(v) for v in s["test_pr_auc"]]
     return out
+
+
+# --------------------------------------------------------------------------
+# Model selection (Phase 2). Rule fixed BEFORE the full run:
+#   1. rank by mean repeated-CV PR-AUC
+#   2. every model whose mean is within ONE std (of the best model's fold
+#      scores) of the best counts as tied with it
+#   3. among tied models pick the simplest: LR < RF < XGBoost < MLP
+#      (fewer moving parts, exact SHAP, easier to defend in the Q&A)
+# The corrected paired t-test is reported as supporting evidence only.
+# --------------------------------------------------------------------------
+COMPLEXITY_ORDER = ["Logistic Regression", "Random Forest", "XGBoost", "Neural Network (MLP)"]
+
+
+def corrected_paired_ttest(a, b, test_train_ratio: float = 1 / (config.CV_FOLDS - 1)) -> dict:
+    """Nadeau & Bengio (2003) corrected resampled t-test on paired fold scores.
+    A plain t-test is too optimistic because CV training sets overlap; the
+    correction inflates the variance by (1/k + n_test/n_train)."""
+    d = np.asarray(a) - np.asarray(b)
+    k = len(d)
+    se = np.sqrt((1 / k + test_train_ratio) * d.var(ddof=1))
+    t = d.mean() / se if se > 0 else 0.0
+    return {"mean_diff": float(d.mean()), "folds_won": int((d > 0).sum()), "folds": k,
+            "p_corrected": float(2 * stats.t.sf(abs(t), df=k - 1))}
+
+
+def select_model(comparison: dict) -> tuple[str, dict]:
+    """Apply the selection rule above. Returns (chosen name, explanation)."""
+    means = {n: c["repeated_cv"]["pr_auc"]["mean"] for n, c in comparison.items()}
+    best = max(means, key=means.get)
+    tol = comparison[best]["repeated_cv"]["pr_auc"]["std"]
+    tied = [n for n in means if means[n] >= means[best] - tol]
+    chosen = next(n for n in COMPLEXITY_ORDER if n in tied)
+    best_folds = comparison[best]["repeated_cv"]["pr_auc"]["folds"]
+    vs_best = {n: corrected_paired_ttest(best_folds, c["repeated_cv"]["pr_auc"]["folds"])
+               for n, c in comparison.items() if n != best}
+    return chosen, {
+        "rule": "highest mean CV PR-AUC; models within 1 std of the best are tied; "
+                "among tied, simplest wins (LR < RF < XGBoost < MLP)",
+        "highest_mean": best, "tolerance_1std": float(tol),
+        "tied_with_best": tied, "chosen": chosen,
+        "ranking": sorted(means, key=means.get, reverse=True),
+        "best_vs_others_paired": vs_best,
+    }
+
+
+def nested_cv(name: str, spec: dict, X, y, lists: dict, n_iter: int = config.N_ITER_SEARCH,
+              outer_folds: int = config.CV_FOLDS) -> dict:
+    """Tuning inside each outer fold, scoring on the outer fold. The gap to the
+    plain repeated-CV score measures how optimistic 'tune and evaluate on the
+    same data' was. Outer folds use a different seed from the tuning folds."""
+    outer = StratifiedKFold(outer_folds, shuffle=True, random_state=RS + 1)
+    X = X.reset_index(drop=True)
+    scores = []
+    for tr, va in outer.split(X, y):
+        best, _ = tune(name, spec, X.iloc[tr], y[tr], lists, n_iter=n_iter)
+        scores.append(average_precision_score(y[va], best.predict_proba(X.iloc[va])[:, 1]))
+    return {"model": name, "outer_folds": outer_folds,
+            "pr_auc": {"mean": float(np.mean(scores)), "std": float(np.std(scores)),
+                       "folds": [float(s) for s in scores]}}
 
 
 def oof_probabilities(estimator, X, y) -> np.ndarray:
@@ -151,6 +220,58 @@ def evaluate(y_true, proba, threshold: float) -> dict:
         "confusion_matrix": {"tn": int(tn), "fp": int(fp), "fn": int(fn), "tp": int(tp)},
         "baseline_pr_auc": float(np.mean(y_true)),  # a random model scores the base rate
     }
+
+
+def expected_calibration_error(y_true, proba, n_bins: int = 10) -> float:
+    """Weighted average gap between predicted and observed rate across equal-
+    size (quantile) bins. 0 = perfectly calibrated. 0.05 = off by 5 points."""
+    y, p = np.asarray(y_true), np.asarray(proba)
+    bins = np.array_split(np.argsort(p), n_bins)
+    return float(sum(len(b) / len(p) * abs(p[b].mean() - y[b].mean()) for b in bins if len(b)))
+
+
+def calibration_report(y_true, raw, calibrated) -> dict:
+    out = {}
+    for label, p in [("uncalibrated", raw), ("calibrated", calibrated)]:
+        out[label] = {"brier": float(brier_score_loss(y_true, p)),
+                      "ece": expected_calibration_error(y_true, p),
+                      "mean_predicted": float(np.mean(p)), "observed_rate": float(np.mean(y_true))}
+    return out
+
+
+def bootstrap_ci(y_true, proba, threshold: float, extra=None, n_boot: int = 1000,
+                 seed: int = RS) -> dict:
+    """95% percentile bootstrap intervals for test-set metrics. The test set has
+    ~47 leavers, so a single number hides a lot of uncertainty.
+    extra: optional {name: f(idx) -> float} for metrics that need other arrays."""
+    y, p = np.asarray(y_true), np.asarray(proba)
+    rng = np.random.default_rng(seed)
+    draws = {"pr_auc": [], "roc_auc": [], "recall": [], "precision": []}
+    draws.update({k: [] for k in (extra or {})})
+    for _ in range(n_boot):
+        idx = rng.integers(0, len(y), len(y))
+        yb, pb = y[idx], p[idx]
+        if yb.min() == yb.max():
+            continue
+        flag = pb >= threshold
+        draws["pr_auc"].append(average_precision_score(yb, pb))
+        draws["roc_auc"].append(roc_auc_score(yb, pb))
+        draws["recall"].append(flag[yb == 1].mean())
+        draws["precision"].append(yb[flag].mean() if flag.any() else 0.0)
+        for k, f in (extra or {}).items():
+            draws[k].append(f(idx))
+    return {k: {"low": float(np.percentile(v, 2.5)), "high": float(np.percentile(v, 97.5))}
+            for k, v in draws.items()}
+
+
+def wilson_interval(successes: int, n: int, z: float = 1.96) -> tuple[float, float]:
+    """95% interval for a proportion; behaves sensibly when n is small or p is 0."""
+    if n == 0:
+        return (np.nan, np.nan)
+    ph = successes / n
+    centre = (ph + z * z / (2 * n)) / (1 + z * z / n)
+    half = z * np.sqrt(ph * (1 - ph) / n + z * z / (4 * n * n)) / (1 + z * z / n)
+    return (float(max(0.0, centre - half)), float(min(1.0, centre + half)))
 
 
 # --------------------------------------------------------------------------
@@ -215,16 +336,37 @@ def fairness_report(df: pd.DataFrame, proba: np.ndarray, threshold: float) -> pd
     d = df[[config.TARGET, "Gender", "Age"]].copy()
     d["flagged"] = (proba >= threshold).astype(int)
     d["Gender"] = d["Gender"].map({1: "Male", 0: "Female"}).fillna(d["Gender"])
-    d["AgeBand"] = pd.cut(d["Age"], [0, 30, 40, 50, 100], labels=["<30", "30-39", "40-49", "50+"])
+    # right=False -> [0,30) [30,40) [40,50) [50,100): the labels match the bins.
+    # (pd.cut defaults to right-closed bins, which put 50-year-olds in "40-49".)
+    d["AgeBand"] = pd.cut(d["Age"], [0, 30, 40, 50, 100], right=False,
+                          labels=["<30", "30-39", "40-49", "50+"])
+    d["p"] = proba
     rows = []
     for attr in ["Gender", "AgeBand"]:
         for grp, g in d.groupby(attr, observed=True):
             leavers = g[g[config.TARGET] == 1]
+            lo, hi = wilson_interval(int(leavers.flagged.sum()), len(leavers))
             rows.append({"attribute": attr, "group": str(grp), "n": len(g),
+                         "leavers": len(leavers),
                          "actual_attrition": g[config.TARGET].mean(),
+                         "mean_predicted": g.p.mean(),   # under-prediction shows up here
                          "selection_rate": g.flagged.mean(),
-                         "recall": leavers.flagged.mean() if len(leavers) else np.nan})
+                         "recall": leavers.flagged.mean() if len(leavers) else np.nan,
+                         "recall_ci_low": lo, "recall_ci_high": hi})
     return pd.DataFrame(rows)
+
+
+def group_shap_gap(explainer: "Explainer", X: pd.DataFrame, mask_group, mask_ref, k: int = 8) -> pd.DataFrame:
+    """Mean SHAP contribution (log-odds) for one group of rows minus a reference
+    group, per original feature. Negative = the model pushes this group's risk
+    DOWN more than the reference group's. Used to explain the 50+ recall gap."""
+    ex = explainer.explain(X)
+    s = pd.DataFrame(ex.values, columns=explainer.feature_names, index=X.index)
+    s = s.T.groupby([base_feature(f, explainer.lists) for f in s.columns]).sum().T
+    out = pd.DataFrame({"group_mean_shap": s[np.asarray(mask_group)].mean(),
+                        "reference_mean_shap": s[np.asarray(mask_ref)].mean()})
+    out["gap"] = out.group_mean_shap - out.reference_mean_shap
+    return out.reindex(out.gap.abs().sort_values(ascending=False).index).head(k)
 
 
 def error_analysis(df: pd.DataFrame, proba: np.ndarray, threshold: float,
@@ -233,8 +375,7 @@ def error_analysis(df: pd.DataFrame, proba: np.ndarray, threshold: float,
     """Average profile of true positives, false negatives (missed leavers) and
     false positives (false alarms). Missed leavers who look 'fine' on every
     feature point to causes the data does not capture (e.g. family relocation).
-    TODO(team): read 5-10 individual false negatives with their SHAP drivers
-    and write up the patterns for the technical deep dive."""
+    Individual rows: missed_leavers(). Written patterns: docs/PHASE2_RISK_MODEL.md."""
     d = df[list(features) + [config.TARGET]].copy()
     flagged = proba >= threshold
     y = d[config.TARGET].to_numpy() == 1
@@ -245,6 +386,38 @@ def error_analysis(df: pd.DataFrame, proba: np.ndarray, threshold: float,
     out = d.groupby("outcome")[list(features) + ["p_leave"]].mean()
     out.insert(0, "count", d.groupby("outcome").size())
     return out
+
+
+MISSED_LEAVER_COLUMNS = [
+    "EmployeeNumber", "Age", "Gender", "MaritalStatus", "Department", "JobRole", "JobLevel",
+    "MonthlyIncome", "OverTime", "BusinessTravel", "DistanceFromHome", "YearsAtCompany",
+    "YearsInCurrentRole", "YearsSinceLastPromotion", "YearsWithCurrManager", "TotalWorkingYears",
+    "NumCompaniesWorked", "JobSatisfaction", "EnvironmentSatisfaction", "WorkLifeBalance",
+    "RelationshipSatisfaction", "JobInvolvement", "StockOptionLevel", "PercentSalaryHike",
+    "PerformanceRating", "TrainingTimesLastYear",
+]
+
+
+def missed_leavers(df: pd.DataFrame, X: pd.DataFrame, proba: np.ndarray, threshold: float,
+                   explainer: "Explainer", k: int = 3) -> pd.DataFrame:
+    """One row per false negative: who they are, P(leave), and the k features
+    that pushed their risk DOWN most and UP most. Read these one by one: the
+    patterns are the error-analysis write-up."""
+    y = df[config.TARGET].to_numpy() == 1
+    idx = np.where(y & (proba < threshold))[0]
+    if not len(idx):
+        return pd.DataFrame()
+    ex = explainer.explain(X.iloc[idx])
+    s = pd.DataFrame(ex.values, columns=explainer.feature_names)
+    s = s.T.groupby([base_feature(f, explainer.lists) for f in s.columns]).sum().T
+    lowered = s.apply(lambda r: "; ".join(f"{f} {v:+.2f}" for f, v in r.nsmallest(k).items()), axis=1)
+    raised = s.apply(lambda r: "; ".join(f"{f} {v:+.2f}" for f, v in r.nlargest(k).items() if v > 0), axis=1)
+    out = df.iloc[idx][[c for c in MISSED_LEAVER_COLUMNS if c in df.columns]].reset_index(drop=True)
+    out.insert(1, "p_leave", np.round(proba[idx], 3))
+    out["gap_to_threshold"] = np.round(threshold - proba[idx], 3)
+    out["top_drivers_lowering_risk"] = lowered.to_numpy()
+    out["top_drivers_raising_risk"] = raised.to_numpy()
+    return out.sort_values("p_leave").reset_index(drop=True)
 
 
 def _jsonable(v):

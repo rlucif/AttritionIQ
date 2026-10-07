@@ -18,6 +18,17 @@ Every member should be able to answer all of these. Draft answers are starting p
 - **Why are SHAP values in log-odds?** For linear and tree models, SHAP is additive in the model's raw output (log-odds). Calibration is monotonic, so the ranking of drivers does not change.
 - **Fairness?** Sensitive attributes are excluded as inputs, but other features can act as proxies (e.g. TotalWorkingYears for age). That is why we check recall by group on outputs.
 
+### Phase 2 results (numbers from `docs/PHASE2_RISK_MODEL.md`)
+- **Which model and why?** Logistic regression: highest CV PR-AUC (0.625 ± 0.054). XGBoost (0.606) is statistically tied with it (paired corrected t-test p = 0.39), and our pre-set rule says the simplest tied model wins. The rule was in the code before the full run.
+- **Isn't tuning and scoring on the same folds optimistic?** We checked with nested CV: 0.654 vs 0.625. There is no sign of inflation, since LR has only two hyperparameters.
+- **Why is test PR-AUC (0.562) lower than CV (0.625)?** The test set has 47 leavers, and its 95% CI is 0.42-0.69, which contains the CV value. We did not change anything after looking at the test set.
+- **Why a threshold of 0.32 when theory says 0.21?** Theory assumes perfect calibration. The model over-predicts in the 0.21-0.32 band (26% predicted vs 18% actual), and the cost curve is flat from 0.27 to 0.35 (within about 1%).
+- **Why does the threshold not depend on salary?** Both the intervention cost and the replacement cost are multiples of the same salary, so it cancels: p* = months / (12 x multiplier x success).
+- **What if your cost assumptions are wrong?** Savings are positive in 26 of 27 scenarios (0.5-2x replacement, 0.5-2 months intervention, 20-60% success). The only loss is the all-pessimistic corner.
+- **Why does SHAP say low income lowers risk?** Collinearity: income, JobLevel (r = 0.95) and PayGapPct move together, so only their sum is meaningful. Dropping income costs PR-AUC (p = 0.045), so it stays.
+- **Is the model unfair to older employees?** Recall falls with age (69% under 30, 40% at 50+), but average predicted risk for 50+ matches their actual rate. The cause is the seniority signal (long careers, senior roles read as "stays"). Adding Age as an input does not fix it (50+ recall stays at 40%) and lowers female recall from 61% to 51%.
+- **Who does the model miss, and why?** Experienced, senior, non-overtime employees who look like stayers on every recorded feature. It catches 1 of 19 senior-role leavers. The data has no exit reason, so retirement cannot be told apart from resignation.
+
 ## Segments (Track 1)
 - **How did you choose k?** Elbow, silhouette and the dendrogram. Silhouette is low (overlapping groups), which is normal for HR data; say so.
 - **Why scale before clustering?** K-Means uses distances; unscaled income would dominate.

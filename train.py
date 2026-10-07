@@ -24,8 +24,9 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import shap  # noqa: E402
 from scipy.cluster.hierarchy import dendrogram  # noqa: E402
+from sklearn.base import clone  # noqa: E402
 from sklearn.calibration import calibration_curve  # noqa: E402
-from sklearn.metrics import precision_recall_curve  # noqa: E402
+from sklearn.metrics import average_precision_score, precision_recall_curve  # noqa: E402
 
 from src import config, data, forecast, model, rag, recommend, roi, segment  # noqa: E402
 
@@ -38,6 +39,25 @@ def savefig(name: str):
     plt.tight_layout()
     plt.savefig(config.FIG_DIR / f"{name}.png", dpi=130)
     plt.close()
+
+
+def shap_waterfall(explainer, X_row: pd.DataFrame, lists: dict, title: str, name: str):
+    """Waterfall for one employee, with one-hot columns summed back to the
+    original feature and the employee's real (unscaled) values on the axis."""
+    ex = explainer.explain(X_row)
+    s = pd.Series(ex.values[0], index=explainer.feature_names)
+    g = s.groupby([data.base_feature(f, lists) for f in s.index]).sum()
+    raw = X_row.iloc[0].to_dict()
+    raw["PayGapPct"] = round(float(explainer.transform.transform(X_row)["PayGapPct"].iloc[0]), 3)
+    e = shap.Explanation(values=g.to_numpy(), base_values=float(np.ravel(ex.base_values)[0]),
+                         data=np.array([raw.get(f, "") for f in g.index], dtype=object),
+                         feature_names=list(g.index))
+    shap.plots.waterfall(e, max_display=10, show=False)
+    plt.title(title, fontsize=10)
+    plt.gcf().text(0.01, 0.005, "Bars in log-odds of the uncalibrated model; the title shows the "
+                   "calibrated probability. Calibration rescales the score, it does not reorder drivers.",
+                   fontsize=7, color="grey")
+    savefig(name)
 
 
 def step(msg: str):
@@ -71,34 +91,72 @@ def main(fast: bool = False):
         comparison[name], fitted[name] = info, best
     metrics["model_comparison"] = comparison
 
-    # Pick the winner on mean CV PR-AUC. TODO(team): if two models are within
-    # one std of each other, consider preferring the simpler, more explainable one.
-    best_name = max(comparison, key=lambda n: comparison[n]["repeated_cv"]["pr_auc"]["mean"])
+    # Selection rule (fixed before the run, see model.select_model): models within
+    # one std of the best mean PR-AUC are tied; among tied, the simplest wins.
+    best_name, selection = model.select_model(comparison)
+    metrics["model_selection"] = selection
     base_model = fitted[best_name]
-    step(f"Best model: {best_name}")
+    step(f"Chosen model: {best_name} (highest mean: {selection['highest_mean']}, "
+         f"tied: {selection['tied_with_best']})")
+
+    if not fast:
+        step(f"Nested CV for {best_name} (how optimistic was tune-and-score on the same data?)")
+        nested = model.nested_cv(best_name, specs[best_name], X_train, y_train, lists, n_iter=n_iter)
+        nested["plain_repeated_cv_mean"] = comparison[best_name]["repeated_cv"]["pr_auc"]["mean"]
+        nested["optimism"] = nested["plain_repeated_cv_mean"] - nested["pr_auc"]["mean"]
+        metrics["nested_cv"] = nested
 
     step("Out-of-fold probabilities, calibration and cost-optimal threshold")
     calibrated = model.calibrate(base_model, X_train, y_train)
     oof = model.oof_probabilities(calibrated, X_train, y_train)
+    oof_raw = model.oof_probabilities(base_model, X_train, y_train)
     repl_tr = roi.replacement_cost(train)
     int_tr = roi.intervention_cost(train)
-    threshold, curve = roi.optimise_threshold(y_train, oof, repl_tr, int_tr, config.INTERVENTION_SUCCESS_RATE)
+    success = config.INTERVENTION_SUCCESS_RATE
+    threshold, curve = roi.optimise_threshold(y_train, oof, repl_tr, int_tr, success)
 
     p_test = calibrated.predict_proba(X_test)[:, 1]
+    p_test_raw = base_model.predict_proba(X_test)[:, 1]
+    repl_te, int_te = roi.replacement_cost(test), roi.intervention_cost(test)
     metrics["best_model"] = best_name
+    metrics["calibration"] = {"oof_train": model.calibration_report(y_train, oof_raw, oof),
+                              "test": model.calibration_report(y_test, p_test_raw, p_test)}
+    metrics["threshold"] = {
+        "cost_optimal_oof_train": threshold,
+        "break_even_theory": roi.break_even_threshold(),
+        "assumptions": {"replacement_multiplier": config.REPLACEMENT_COST_MULTIPLIER,
+                        "intervention_months": config.INTERVENTION_COST_MONTHS,
+                        "success_rate": success},
+    }
     metrics["test_evaluation"] = model.evaluate(y_test, p_test, threshold)
     metrics["test_evaluation_at_0.5"] = model.evaluate(y_test, p_test, 0.5)
-    metrics["roi_test"] = roi.roi_summary(y_test, p_test, threshold, roi.replacement_cost(test),
-                                          roi.intervention_cost(test), config.INTERVENTION_SUCCESS_RATE)
+    metrics["roi_test"] = roi.roi_summary(y_test, p_test, threshold, repl_te, int_te, success)
+
+    def savings(idx):  # bootstrap: savings vs do-nothing on a resampled test set
+        yb, pb, rb, ib = y_test[idx], p_test[idx], repl_te[idx], int_te[idx]
+        return (roi.realised_cost(yb, np.zeros(len(idx), bool), rb, ib, success)
+                - roi.realised_cost(yb, pb >= threshold, rb, ib, success))
+    metrics["test_ci95"] = model.bootstrap_ci(y_test, p_test, threshold,
+                                              extra={"savings_vs_do_nothing": savings})
+
+    step("ROI sensitivity to the business assumptions")
+    sens = roi.sensitivity_grid(train, y_train, oof, test, y_test, p_test)
+    sens.to_csv(config.REPORTS_DIR / "roi_sensitivity.csv", index=False)
+    metrics["roi_sensitivity"] = sens.round(4).to_dict("records")
+
     metrics["fairness_test"] = model.fairness_report(test, p_test, threshold).round(3).to_dict("records")
+    metrics["fairness_oof_train"] = model.fairness_report(train, oof, threshold).round(3).to_dict("records")
     metrics["error_analysis_test"] = model.error_analysis(test, p_test, threshold).round(3).reset_index().to_dict("records")
+    metrics["error_analysis_oof_train"] = model.error_analysis(train, oof, threshold).round(3).reset_index().to_dict("records")
 
     # Figures: threshold cost curve, PR curves, calibration
     plt.figure(figsize=(6, 4))
     plt.plot(curve.threshold, curve.total_cost)
-    plt.axvline(threshold, ls="--", c="k")
+    plt.axvline(threshold, ls="--", c="k", label=f"cost-optimal {threshold:.2f}")
+    plt.axvline(roi.break_even_threshold(), ls=":", c="grey",
+                label=f"break-even theory {roi.break_even_threshold():.2f}")
     plt.xlabel("Decision threshold"); plt.ylabel("Total expected cost (train, out-of-fold)")
-    plt.title(f"Cost-optimal threshold = {threshold:.2f}")
+    plt.legend(fontsize=8); plt.title(f"Cost-optimal threshold = {threshold:.2f}")
     savefig("threshold_cost_curve")
 
     plt.figure(figsize=(6, 4))
@@ -110,20 +168,90 @@ def main(fast: bool = False):
     savefig("pr_curves_test")
 
     plt.figure(figsize=(5, 4))
-    for label, p in [("uncalibrated", base_model.predict_proba(X_test)[:, 1]), ("calibrated", p_test)]:
+    for label, p in [("uncalibrated", p_test_raw), ("calibrated", p_test)]:
         fr, mp = calibration_curve(y_test, p, n_bins=8, strategy="quantile")
         plt.plot(mp, fr, marker="o", label=label)
     plt.plot([0, 1], [0, 1], ls=":", c="grey")
     plt.xlabel("Predicted probability"); plt.ylabel("Observed attrition rate"); plt.legend(); plt.title("Calibration (test)")
     savefig("calibration_test")
 
+    plt.figure(figsize=(6, 4))
+    folds = pd.DataFrame({n: c["repeated_cv"]["pr_auc"]["folds"] for n, c in comparison.items()})
+    plt.boxplot([folds[c] for c in folds], tick_labels=[c.replace(" (MLP)", "") for c in folds])
+    plt.ylabel("PR-AUC per fold (5x3 repeated CV)"); plt.title(f"Model comparison - chosen: {best_name}")
+    plt.xticks(fontsize=8); savefig("model_comparison_cv")
+
     step("SHAP explanations")
     explainer = model.Explainer(base_model, X_train, lists)
     X_shap = X_test if explainer.kind != "model-agnostic" else X_test.sample(100, random_state=config.RANDOM_STATE)
     ex = explainer.explain(X_shap)
-    metrics["shap_global_top10"] = explainer.global_importance(X_shap).head(10).round(4).to_dict()
+    glob = explainer.global_importance(X_shap)
+    metrics["shap_global_top10"] = glob.head(10).round(4).to_dict()
     shap.plots.beeswarm(ex, max_display=15, show=False)
     savefig("shap_beeswarm")
+    plt.figure(figsize=(6, 5))
+    glob.head(15)[::-1].plot.barh()
+    plt.xlabel("Mean |SHAP| (one-hot columns summed per feature)"); plt.title("Global feature importance (test)")
+    savefig("shap_global_bar")
+
+    # Individual explanations: one caught leaver, one missed leaver, one false alarm
+    flag_te = p_test >= threshold
+    cases = {
+        "caught_leaver": np.where((y_test == 1) & flag_te)[0],
+        "missed_leaver": np.where((y_test == 1) & ~flag_te)[0],
+        "false_alarm": np.where((y_test == 0) & flag_te)[0],
+    }
+    metrics["shap_individual_examples"] = {}
+    for label, idx in cases.items():
+        if not len(idx):
+            continue
+        # highest-risk caught leaver / median missed leaver / highest-risk false alarm
+        i = idx[np.argmax(p_test[idx])] if label != "missed_leaver" else idx[np.argsort(p_test[idx])[len(idx) // 2]]
+        emp = int(test[config.ID_COL].iloc[i])
+        shap_waterfall(explainer, X_test.iloc[[i]], lists,
+                       f"{label.replace('_', ' ')} - employee #{emp}, P(leave) {p_test[i]:.0%}",
+                       f"shap_waterfall_{label}")
+        metrics["shap_individual_examples"][label] = {
+            "employee": emp, "p_leave": float(p_test[i]),
+            "drivers": explainer.drivers(X_test.iloc[[i]], k=5)[["feature", "shap", "direction"]]
+            .round(3).to_dict("records")}
+
+    # ------------------------------------------- Fairness deep dive (50+)
+    step("Fairness: why are older leavers missed?")
+    age50 = (train["Age"] >= 50).to_numpy()
+    leaver = y_train == 1
+    gap = model.group_shap_gap(explainer, X_train, age50 & leaver, ~age50 & leaver)
+    metrics["fairness_50plus"] = {
+        "leavers_50plus_train": int((age50 & leaver).sum()),
+        "mean_oof_p_leavers_50plus": float(oof[age50 & leaver].mean()),
+        "mean_oof_p_leavers_under50": float(oof[~age50 & leaver].mean()),
+        "shap_gap_vs_younger_leavers": gap.round(4).reset_index(names="feature").to_dict("records"),
+    }
+    # Counterfactual: identical model and settings, sensitive attributes put back in
+    lists_s = data.feature_lists(exclude_sensitive=False)
+    Xs_train, _ = data.X_y(train, lists_s)
+    pipe_s = clone(base_model).set_params(prep=data.build_preprocessor(lists_s))
+    oof_s = model.oof_probabilities(model.calibrate(pipe_s, Xs_train, y_train), Xs_train, y_train)
+    thr_s, _ = roi.optimise_threshold(y_train, oof_s, repl_tr, int_tr, success)
+    metrics["sensitive_counterfactual"] = {
+        "note": "Same model and hyperparameters with Gender, Age, MaritalStatus included. "
+                "Out-of-fold on train. Shown to quantify the trade-off; the deployed model excludes them.",
+        "oof_pr_auc_excluded": float(average_precision_score(y_train, oof)),
+        "oof_pr_auc_included": float(average_precision_score(y_train, oof_s)),
+        "threshold_excluded": threshold, "threshold_included": thr_s,
+        "fairness_excluded": metrics["fairness_oof_train"],
+        "fairness_included": model.fairness_report(train, oof_s, thr_s).round(3).to_dict("records"),
+    }
+
+    # ------------------------------------------- Error analysis: missed leavers
+    step("Error analysis: exporting every missed leaver with SHAP drivers")
+    miss_test = model.missed_leavers(test, X_test, p_test, threshold, explainer)
+    miss_oof = model.missed_leavers(train, X_train, oof, threshold, explainer)
+    miss_test.to_csv(config.REPORTS_DIR / "missed_leavers_test.csv", index=False)
+    miss_oof.to_csv(config.REPORTS_DIR / "missed_leavers_oof_train.csv", index=False)
+    metrics["missed_leavers"] = {"test": len(miss_test), "oof_train": len(miss_oof),
+                                 "files": ["reports/missed_leavers_test.csv",
+                                           "reports/missed_leavers_oof_train.csv"]}
 
     # ------------------------------------------------- Track 1: segments
     step("Workforce segmentation")

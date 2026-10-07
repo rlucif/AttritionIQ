@@ -1,10 +1,4 @@
 """Central configuration: paths, constants and business assumptions.
-
-Every business number in this file is an ASSUMPTION that the team must be able
-to defend in the Q&A. Each one says where it comes from. Lines marked
-"TEAM ASSUMPTION" have no external source yet: either find one and cite it,
-or present the number as a scenario and show the sensitivity (the app has
-sliders for exactly this).
 """
 from pathlib import Path
 
@@ -29,9 +23,7 @@ AUDIT_LOG = REPORTS_DIR / "audit_log.csv"
 # Data sources
 # --------------------------------------------------------------------------
 # IBM HR Analytics Employee Attrition & Performance. Synthetic dataset created
-# by IBM data scientists (1,470 rows, 35 columns). Kaggle mirror:
-# https://www.kaggle.com/datasets/pavansubhasht/ibm-hr-analytics-attrition-dataset
-# IBM's own copy (used by `python -m src.data --download`):
+# by IBM data scientists (1,470 rows, 35 columns).
 DATASET_URL = (
     "https://raw.githubusercontent.com/IBM/employee-attrition-aif360/"
     "master/data/emp_attrition.csv"
@@ -73,9 +65,6 @@ INTERVENTION_COST_MONTHS = 1.0
 # TEAM ASSUMPTION: share of flagged leavers an intervention actually retains.
 INTERVENTION_SUCCESS_RATE = 0.40
 
-# The dataset does not state its currency or the time window of the Attrition
-# label. We display MonthlyIncome as-is and treat Attrition as "left within
-# 12 months". Say this openly in the presentation.
 CURRENCY_SYMBOL = "$"
 ATTRITION_HORIZON_MONTHS = 12
 

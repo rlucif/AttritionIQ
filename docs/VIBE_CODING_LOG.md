@@ -17,11 +17,11 @@ Keep entries short. Graders want to see how you directed the AI tools and what y
 
 ## Log
 
-| Date       | Who | Tool   | Task / prompt summary                                                  | Accepted / changed / rejected                             | How we verified                                    |
-| ---------- | --- | ------ | ---------------------------------------------------------------------- | --------------------------------------------------------- | -------------------------------------------------- |
-| 2026-10-07 |     | Claude | Brainstormed and stress-tested the AttritionIQ idea against the rubric | Accepted cost-based threshold as core; added all 5 tracks | Team review                                        |
-| 2026-10-07 |     | Claude | Generated the repo skeleton: pipeline, 5 modules, app, tests, docs     | Accepted as skeleton; TODO(team) items left for us        | Ran `train.py --fast`, `pytest`, app headless test |
-|            |     |        |                                                                        |                                                           |                                                    |
+| Date       | Who | Tool   | Task / prompt summary                                                  | Accepted / changed / rejected                                                                                                                      | How we verified                                                                                              |
+| ---------- | --- | ------ | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| 2026-10-07 |     | Claude | Brainstormed and stress-tested the AttritionIQ idea against the rubric | Accepted cost-based threshold as core; added all 5 tracks                                                                                          | Team review                                                                                                  |
+| 2026-10-07 |     | Claude | Generated the repo skeleton: pipeline, 5 modules, app, tests, docs     | Accepted as skeleton; TODO(team) items left for us                                                                                                 | Ran `train.py --fast`, `pytest`, app headless test                                                           |
+| 2026-10-07 | Raj | Claude | Phase 1: quality checks, EDA notebook, feature ablation script         | Changed: asked for a paired, two-model ablation with a decision rule fixed before seeing results; all 4 engineered features dropped from the model | Reproduced our own ablation numbers exactly (LR 0.6225); `pytest` 8 passed; `train.py --fast` ran end to end |
 
 ## What the AI got wrong and we fixed
 
@@ -34,6 +34,7 @@ Keep entries short. Graders want to see how you directed the AI tools and what y
 | `CURRENCY_SYMBOL = "$"`             | Decision                 | Dataset units                                                     |
 
 - _e.g. a metric that looked fine but measured nothing; a library API that had changed_
+- The AI's correlation snippet printed hundreds of `NaN` rows: in pandas 3, `.stack()` no longer drops missing values. Fixed with `.stack().dropna()` after reading the output, not trusting the code.
 
 ## What we wrote or decided ourselves
 

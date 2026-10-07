@@ -1,0 +1,140 @@
+{
+  "logreg": {
+    "all_engineered": {
+      "mean": 0.6225124579439374,
+      "std": 0.06081953902109926
+    },
+    "no_engineered": {
+      "mean": 0.6178916819434249,
+      "std": 0.059016640392128915,
+      "gain_from_all_engineered": {
+        "mean_gain": 0.004620776000512457,
+        "folds_won": 9,
+        "folds": 15,
+        "p_corrected": 0.7337173770077255
+      }
+    },
+    "without_YearsPerCompany": {
+      "mean": 0.6258228460330391,
+      "std": 0.0546208713082709,
+      "gain_from_feature": {
+        "mean_gain": -0.0033103880891017347,
+        "folds_won": 7,
+        "folds": 15,
+        "p_corrected": 0.7631895959619521
+      }
+    },
+    "without_PromotionLagRatio": {
+      "mean": 0.625043611682502,
+      "std": 0.059949174219716406,
+      "gain_from_feature": {
+        "mean_gain": -0.0025311537385646066,
+        "folds_won": 3,
+        "folds": 15,
+        "p_corrected": 0.21948638800361064
+      }
+    },
+    "without_ManagerTenureRatio": {
+      "mean": 0.6125354612593031,
+      "std": 0.06268608014290218,
+      "gain_from_feature": {
+        "mean_gain": 0.009976996684634146,
+        "folds_won": 11,
+        "folds": 15,
+        "p_corrected": 0.15481340970148205
+      }
+    },
+    "without_SatisfactionIndex": {
+      "mean": 0.6225261998098419,
+      "std": 0.06067575834711577,
+      "gain_from_feature": {
+        "mean_gain": -1.3741865904530008e-5,
+        "folds_won": 6,
+        "folds": 15,
+        "p_corrected": 0.9826902811366143
+      }
+    },
+    "sensitive_included": {
+      "mean": 0.6384191114198949,
+      "std": 0.058884947078613324,
+      "gain_from_sensitive": {
+        "mean_gain": 0.01590665347595753,
+        "folds_won": 12,
+        "folds": 15,
+        "p_corrected": 0.16144495978476667
+      }
+    }
+  },
+  "xgboost": {
+    "all_engineered": {
+      "mean": 0.5713207424115668,
+      "std": 0.049508952901630085
+    },
+    "no_engineered": {
+      "mean": 0.5630374355644306,
+      "std": 0.052308193807642546,
+      "gain_from_all_engineered": {
+        "mean_gain": 0.008283306847136204,
+        "folds_won": 10,
+        "folds": 15,
+        "p_corrected": 0.5794822467235342
+      }
+    },
+    "without_YearsPerCompany": {
+      "mean": 0.5710090937454504,
+      "std": 0.04938176493122049,
+      "gain_from_feature": {
+        "mean_gain": 0.0003116486661165337,
+        "folds_won": 7,
+        "folds": 15,
+        "p_corrected": 0.9836883328615577
+      }
+    },
+    "without_PromotionLagRatio": {
+      "mean": 0.5732656549424622,
+      "std": 0.05077302221248338,
+      "gain_from_feature": {
+        "mean_gain": -0.0019449125308952375,
+        "folds_won": 7,
+        "folds": 15,
+        "p_corrected": 0.7899348357140644
+      }
+    },
+    "without_ManagerTenureRatio": {
+      "mean": 0.5690726768321537,
+      "std": 0.05363000363981042,
+      "gain_from_feature": {
+        "mean_gain": 0.0022480655794131278,
+        "folds_won": 8,
+        "folds": 15,
+        "p_corrected": 0.7947004649802226
+      }
+    },
+    "without_SatisfactionIndex": {
+      "mean": 0.5691515798013482,
+      "std": 0.054551339467293264,
+      "gain_from_feature": {
+        "mean_gain": 0.0021691626102186595,
+        "folds_won": 8,
+        "folds": 15,
+        "p_corrected": 0.7990151875216139
+      }
+    },
+    "sensitive_included": {
+      "mean": 0.5877990565110421,
+      "std": 0.06245507431671317,
+      "gain_from_sensitive": {
+        "mean_gain": 0.0164783140994754,
+        "folds_won": 11,
+        "folds": 15,
+        "p_corrected": 0.2965661616050619
+      }
+    }
+  },
+  "decisions": {
+    "YearsPerCompany": "DROP",
+    "PromotionLagRatio": "DROP",
+    "ManagerTenureRatio": "DROP",
+    "SatisfactionIndex": "DROP"
+  }
+}

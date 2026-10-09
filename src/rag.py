@@ -20,6 +20,9 @@ import pandas as pd
 from src import config
 
 EMBED_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+# Longest wait for the LLM before falling back to the template brief. The SDKs set no
+# timeout by default, so a stalled request would leave the page spinning forever.
+LLM_TIMEOUT_S = float(os.getenv("LLM_TIMEOUT_S", "30"))
 
 
 # --------------------------------------------------------------------------
@@ -250,16 +253,19 @@ def generate(prompt: str) -> tuple[str, str]:
     try:
         if provider == "gemini" and os.getenv("GEMINI_API_KEY"):
             from google import genai
-            client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+            from google.genai import types
+            client = genai.Client(api_key=os.environ["GEMINI_API_KEY"],
+                                  http_options=types.HttpOptions(timeout=int(LLM_TIMEOUT_S * 1000)))  # ms
             resp = client.models.generate_content(model=os.getenv("LLM_MODEL", "gemini-2.5-flash"), contents=prompt)
             return resp.text, "gemini"
         if provider == "anthropic" and os.getenv("ANTHROPIC_API_KEY"):
             import anthropic
-            msg = anthropic.Anthropic().messages.create(
+            msg = anthropic.Anthropic(timeout=LLM_TIMEOUT_S).messages.create(
                 model=os.getenv("LLM_MODEL", "claude-sonnet-5-5"), max_tokens=600,
                 messages=[{"role": "user", "content": prompt}])
             return msg.content[0].text, "anthropic"
-    except Exception as e:  # network or quota problems must not break a live demo
+    except Exception as e:  # network, quota or timeout problems must not break a live demo
+        print(f"[rag] LLM call failed ({provider}): {type(e).__name__}: {e}", flush=True)  # shows in host logs
         return f"(LLM call failed: {e})\n\n" + _template_brief(prompt), "template"
     return _template_brief(prompt), "template"
 

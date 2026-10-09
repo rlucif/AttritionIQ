@@ -55,6 +55,20 @@ Deployed from `main` at `51bcdf4` (PR #4). Build log: Python 3.13.16, dependenci
 | P4 | **Pass** (checked in a narrow, phone-width browser pane). All 4 pages render, no exception. Overview matches the frozen model: threshold 0.32, 294 employees, 36 flagged, $181,132 saved (Phase 2: $181k). 20-row CSV scored, 4 flagged (same as P3); download button shown. HR copilot retrieval returns handbook clauses. Still to do: Raj on a real phone |
 | P5 | **Fail, fixed.** "Generate retention brief" spun on "Drafting the brief" for 4+ minutes with nothing in the logs. Cause: neither LLM SDK sets a timeout by default (`google-genai` 2.29: no timeout, no retries), so a request that gets no reply waits forever; a failed request would have shown the template within seconds. Reproduced locally against a server that accepts and never replies: the old code still waiting after 20 s. Fix (`src/rag.py`): `LLM_TIMEOUT_S` (default 30 s, env override) on the Gemini and Claude clients, and failures are printed to the host log. New test `tests/test_llm_timeout.py`: falls back to the template in about 3 s. Full suite on the fresh copy: 26 passed, 0 skipped. `train.py` never calls the LLM, so `metrics.json` is unaffected. Re-check P5 live after the fix is merged; if the log then shows a timeout or an error, the cause is the model name, key or quota |
 
+### P5 re-check after the fix (2026-10-09, live, `main` at `0f79700`, PR #5)
+
+Two clicks on "Generate retention brief" (employee #478):
+
+| Try | Result | Time to answer |
+|---|---|---|
+| 1 | Gemini returned `504 DEADLINE_EXCEEDED` (no answer inside the 30 s limit); template brief shown | about 30 s |
+| 2 | Gemini returned `503 UNAVAILABLE`, "This model is currently experiencing high demand"; template brief shown | 36 s |
+
+- **The fix works:** the page no longer hangs; it falls back to the grounded template with the error shown.
+- **P5 not yet passed, cause outside the code:** both errors come from Google's servers after the request was accepted, so the key, `LLM_PROVIDER` and `LLM_MODEL` in Secrets are correct. The model is overloaded.
+- **Next (Raj, no code change):** retry later. If it keeps failing, change `LLM_MODEL` in the Secrets box to a less busy Gemini model listed in Google AI Studio, and/or add `LLM_TIMEOUT_S = "60"` (the env override already exists). Changing Secrets does not touch the repo, so it does not re-open Phase 5.
+- **Demo rule:** the brief is shown as "optional live" in the Phase 7 demo script; the template fallback is the planned path if Gemini is busy.
+
 ## Sources
 
 - Streamlit: [Manage your app (limits, sleep)](https://docs.streamlit.io/deploy/streamlit-community-cloud/manage-your-app), [Secrets management](https://docs.streamlit.io/develop/concepts/connections/secrets-management), [Upgrade Python](https://docs.streamlit.io/deploy/streamlit-community-cloud/manage-your-app/upgrade-python)

@@ -12,6 +12,7 @@ data/external/*.csv
 # keep the JOLTS snapshot used for the reported results (FRED revises data)
 !data/external/JTSQUR.csv
 models/*.joblib
-reports/figures/*.png
+# reports/figures/*.png are committed from the Phase 5 freeze run: the Model & trust page
+# and the slides use them, and the deployed site may not run train.py
 reports/audit_log.csv
 # reports/metrics.json is NOT ignored: commit the final run so graders can see results

@@ -1,0 +1,66 @@
+# AttritionIQ theme: dark canvas, cream type, one accent per page (inspired by gsap.com).
+# Fonts (SIL OFL) and GSAP are self-hosted in static/.
+# Colours here drive Streamlit's own widgets; ui/theme.py styles the custom blocks.
+
+[theme]
+base = "dark"
+primaryColor = "#0ae448"
+backgroundColor = "#0e100f"
+secondaryBackgroundColor = "#1a1c1b"
+textColor = "#fffce1"
+linkColor = "#0ae448"
+linkUnderline = false
+borderColor = "#2b2e2c"
+dataframeBorderColor = "#2b2e2c"
+dataframeHeaderBackgroundColor = "#151716"
+showWidgetBorder = true
+baseRadius = "0.85rem"
+buttonRadius = "full"
+font = "Instrument Sans, system-ui, sans-serif"
+headingFont = "Bricolage Grotesque, system-ui, sans-serif"
+headingFontWeights = [800, 700, 650, 600, 600, 600]
+metricValueFontWeight = 700
+greenColor = "#0ae448"
+redColor = "#ff6b5e"
+orangeColor = "#ff8709"
+violetColor = "#9d95ff"
+blueColor = "#00bae2"
+yellowColor = "#f5e663"
+grayColor = "#7c7f78"
+chartCategoricalColors = ["#0ae448", "#9d95ff", "#ff8709", "#fec5fb", "#00bae2", "#f5e663", "#ff6b5e"]
+
+[[theme.fontFaces]]
+family = "Instrument Sans"
+url = "app/static/fonts/instrument-sans-400.woff2"
+weight = 400
+
+[[theme.fontFaces]]
+family = "Instrument Sans"
+url = "app/static/fonts/instrument-sans-500.woff2"
+weight = 500
+
+[[theme.fontFaces]]
+family = "Instrument Sans"
+url = "app/static/fonts/instrument-sans-600.woff2"
+weight = 600
+
+[[theme.fontFaces]]
+family = "Instrument Sans"
+url = "app/static/fonts/instrument-sans-700.woff2"
+weight = 700
+
+[[theme.fontFaces]]
+family = "Bricolage Grotesque"
+url = "app/static/fonts/bricolage-grotesque.woff2"
+weight = "200 800"
+
+[theme.sidebar]
+backgroundColor = "#141615"
+secondaryBackgroundColor = "#1f2220"
+
+[server]
+# Serves static/ (self-hosted GSAP + fonts) at app/static/, so no CDN is needed.
+enableStaticServing = true
+
+[client]
+toolbarMode = "minimal"

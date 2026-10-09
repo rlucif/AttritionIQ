@@ -1,0 +1,355 @@
+{
+  "data_note": "SIMULATED interaction matrix; oracle = noise-free simulated rating",
+  "tuning_at_0.5_seed42": {
+    "grid": {
+      "n_factors": [
+        2,
+        4,
+        8
+      ],
+      "lr": [
+        0.005,
+        0.01,
+        0.02
+      ],
+      "reg": [
+        0.005,
+        0.01,
+        0.02,
+        0.05,
+        0.1
+      ]
+    },
+    "max_epochs": 150,
+    "best": {
+      "n_factors": 8,
+      "lr": 0.02,
+      "reg": 0.05,
+      "epochs": 147
+    },
+    "top5": [
+      {
+        "n_factors": 8,
+        "lr": 0.02,
+        "reg": 0.05,
+        "epochs": 147,
+        "val_rmse": 0.9353
+      },
+      {
+        "n_factors": 8,
+        "lr": 0.02,
+        "reg": 0.02,
+        "epochs": 150,
+        "val_rmse": 0.938
+      },
+      {
+        "n_factors": 8,
+        "lr": 0.02,
+        "reg": 0.1,
+        "epochs": 147,
+        "val_rmse": 0.9386
+      },
+      {
+        "n_factors": 8,
+        "lr": 0.01,
+        "reg": 0.05,
+        "epochs": 147,
+        "val_rmse": 0.9389
+      },
+      {
+        "n_factors": 8,
+        "lr": 0.005,
+        "reg": 0.05,
+        "epochs": 62,
+        "val_rmse": 0.9392
+      }
+    ]
+  },
+  "density_sweep": [
+    {
+      "observed_frac": 0.1,
+      "model": "item_mean",
+      "rmse_mean": 1.0052,
+      "rmse_std": 0.0032,
+      "pairwise_mean": 0.4979,
+      "pairwise_std": 0.0061
+    },
+    {
+      "observed_frac": 0.1,
+      "model": "oracle",
+      "rmse_mean": 0.6501,
+      "rmse_std": 0.0057,
+      "pairwise_mean": 0.7959,
+      "pairwise_std": 0.0071
+    },
+    {
+      "observed_frac": 0.1,
+      "model": "svd_tuned",
+      "rmse_mean": 1.0041,
+      "rmse_std": 0.0056,
+      "pairwise_mean": 0.5048,
+      "pairwise_std": 0.0031
+    },
+    {
+      "observed_frac": 0.2,
+      "model": "item_mean",
+      "rmse_mean": 1.0047,
+      "rmse_std": 0.0028,
+      "pairwise_mean": 0.4929,
+      "pairwise_std": 0.004
+    },
+    {
+      "observed_frac": 0.2,
+      "model": "oracle",
+      "rmse_mean": 0.6505,
+      "rmse_std": 0.0063,
+      "pairwise_mean": 0.7959,
+      "pairwise_std": 0.0075
+    },
+    {
+      "observed_frac": 0.2,
+      "model": "svd_tuned",
+      "rmse_mean": 0.9854,
+      "rmse_std": 0.0024,
+      "pairwise_mean": 0.502,
+      "pairwise_std": 0.0064
+    },
+    {
+      "observed_frac": 0.3,
+      "model": "item_mean",
+      "rmse_mean": 1.002,
+      "rmse_std": 0.0049,
+      "pairwise_mean": 0.4925,
+      "pairwise_std": 0.0015
+    },
+    {
+      "observed_frac": 0.3,
+      "model": "oracle",
+      "rmse_mean": 0.6485,
+      "rmse_std": 0.0069,
+      "pairwise_mean": 0.796,
+      "pairwise_std": 0.0087
+    },
+    {
+      "observed_frac": 0.3,
+      "model": "svd_tuned",
+      "rmse_mean": 0.9774,
+      "rmse_std": 0.01,
+      "pairwise_mean": 0.5292,
+      "pairwise_std": 0.0368
+    },
+    {
+      "observed_frac": 0.5,
+      "model": "item_mean",
+      "rmse_mean": 1.0033,
+      "rmse_std": 0.0055,
+      "pairwise_mean": 0.4954,
+      "pairwise_std": 0.0035
+    },
+    {
+      "observed_frac": 0.5,
+      "model": "oracle",
+      "rmse_mean": 0.6484,
+      "rmse_std": 0.0091,
+      "pairwise_mean": 0.7985,
+      "pairwise_std": 0.006
+    },
+    {
+      "observed_frac": 0.5,
+      "model": "svd_skeleton",
+      "rmse_mean": 0.9408,
+      "rmse_std": 0.0121,
+      "pairwise_mean": 0.5863,
+      "pairwise_std": 0.0219
+    },
+    {
+      "observed_frac": 0.5,
+      "model": "svd_tuned",
+      "rmse_mean": 0.929,
+      "rmse_std": 0.0023,
+      "pairwise_mean": 0.6208,
+      "pairwise_std": 0.005
+    },
+    {
+      "observed_frac": 0.8,
+      "model": "item_mean",
+      "rmse_mean": 1.0127,
+      "rmse_std": 0.0011,
+      "pairwise_mean": 0.5057,
+      "pairwise_std": 0.0115
+    },
+    {
+      "observed_frac": 0.8,
+      "model": "oracle",
+      "rmse_mean": 0.6469,
+      "rmse_std": 0.0106,
+      "pairwise_mean": 0.8103,
+      "pairwise_std": 0.0217
+    },
+    {
+      "observed_frac": 0.8,
+      "model": "svd_tuned",
+      "rmse_mean": 0.869,
+      "rmse_std": 0.0169,
+      "pairwise_mean": 0.685,
+      "pairwise_std": 0.0315
+    }
+  ],
+  "tuned_configs": {
+    "0.1_42": {
+      "n_factors": 8,
+      "lr": 0.02,
+      "reg": 0.02,
+      "epochs": 12
+    },
+    "0.1_43": {
+      "n_factors": 4,
+      "lr": 0.005,
+      "reg": 0.1,
+      "epochs": 1
+    },
+    "0.1_44": {
+      "n_factors": 4,
+      "lr": 0.01,
+      "reg": 0.005,
+      "epochs": 28
+    },
+    "0.2_42": {
+      "n_factors": 8,
+      "lr": 0.02,
+      "reg": 0.02,
+      "epochs": 8
+    },
+    "0.2_43": {
+      "n_factors": 2,
+      "lr": 0.01,
+      "reg": 0.1,
+      "epochs": 13
+    },
+    "0.2_44": {
+      "n_factors": 4,
+      "lr": 0.01,
+      "reg": 0.1,
+      "epochs": 21
+    },
+    "0.3_42": {
+      "n_factors": 2,
+      "lr": 0.02,
+      "reg": 0.05,
+      "epochs": 15
+    },
+    "0.3_43": {
+      "n_factors": 4,
+      "lr": 0.01,
+      "reg": 0.1,
+      "epochs": 28
+    },
+    "0.3_44": {
+      "n_factors": 8,
+      "lr": 0.02,
+      "reg": 0.05,
+      "epochs": 24
+    },
+    "0.5_42": {
+      "n_factors": 8,
+      "lr": 0.02,
+      "reg": 0.05,
+      "epochs": 147
+    },
+    "0.5_43": {
+      "n_factors": 4,
+      "lr": 0.005,
+      "reg": 0.05,
+      "epochs": 110
+    },
+    "0.5_44": {
+      "n_factors": 2,
+      "lr": 0.01,
+      "reg": 0.05,
+      "epochs": 45
+    },
+    "0.8_42": {
+      "n_factors": 8,
+      "lr": 0.01,
+      "reg": 0.05,
+      "epochs": 42
+    },
+    "0.8_43": {
+      "n_factors": 2,
+      "lr": 0.02,
+      "reg": 0.02,
+      "epochs": 18
+    },
+    "0.8_44": {
+      "n_factors": 8,
+      "lr": 0.02,
+      "reg": 0.05,
+      "epochs": 141
+    }
+  },
+  "random_pairwise": 0.5,
+  "alpha": {
+    "curve": [
+      {
+        "alpha": 0.0,
+        "ndcg3_mean": 0.8312,
+        "ndcg3_std": 0.0044
+      },
+      {
+        "alpha": 0.1,
+        "ndcg3_mean": 0.8351,
+        "ndcg3_std": 0.0021
+      },
+      {
+        "alpha": 0.2,
+        "ndcg3_mean": 0.8368,
+        "ndcg3_std": 0.0016
+      },
+      {
+        "alpha": 0.3,
+        "ndcg3_mean": 0.837,
+        "ndcg3_std": 0.0034
+      },
+      {
+        "alpha": 0.4,
+        "ndcg3_mean": 0.8372,
+        "ndcg3_std": 0.0043
+      },
+      {
+        "alpha": 0.5,
+        "ndcg3_mean": 0.8355,
+        "ndcg3_std": 0.0048
+      },
+      {
+        "alpha": 0.6,
+        "ndcg3_mean": 0.8334,
+        "ndcg3_std": 0.0044
+      },
+      {
+        "alpha": 0.7,
+        "ndcg3_mean": 0.8292,
+        "ndcg3_std": 0.0053
+      },
+      {
+        "alpha": 0.8,
+        "ndcg3_mean": 0.8275,
+        "ndcg3_std": 0.0058
+      },
+      {
+        "alpha": 0.9,
+        "ndcg3_mean": 0.8237,
+        "ndcg3_std": 0.0063
+      },
+      {
+        "alpha": 1.0,
+        "ndcg3_mean": 0.8157,
+        "ndcg3_std": 0.0062
+      }
+    ],
+    "best_alpha": 0.4,
+    "flat_vs_0.6": true,
+    "chosen": 0.6,
+    "note": "NDCG@3 over each employee's unobserved interventions; truth = simulated ratings. CF is trained on the same simulation it is scored against, so this objective favours CF by construction."
+  },
+  "content_vs_truth_spearman_mean": 0.21059453229052894
+}

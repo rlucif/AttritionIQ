@@ -9,6 +9,8 @@ venv/
 # Data and generated outputs (re-created by scripts; keep the repo light)
 data/raw/*.csv
 data/external/*.csv
+# keep the JOLTS snapshot used for the reported results (FRED revises data)
+!data/external/JTSQUR.csv
 models/*.joblib
 reports/figures/*.png
 reports/audit_log.csv

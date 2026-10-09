@@ -1,0 +1,93 @@
+{
+  "Ridge": {
+    "r2_mean": 0.8722462456661179,
+    "r2_std": 0.01309911027580699,
+    "rmse_log_mean": 0.23460944003242665,
+    "alpha": 1.0985411419875573,
+    "alpha_on_grid_edge": false,
+    "zeroed": []
+  },
+  "Lasso": {
+    "r2_mean": 0.8722774521403343,
+    "r2_std": 0.013185247141506071,
+    "rmse_log_mean": 0.23457673392182582,
+    "alpha": 9.102981779915228e-05,
+    "alpha_on_grid_edge": false,
+    "zeroed": [
+      "JobRole_Manufacturing Director",
+      "Department_Sales"
+    ]
+  },
+  "paired": {
+    "ridge_minus_lasso_mean": -3.120647421640162e-05,
+    "std": 0.000287026639016782,
+    "ridge_wins": 7,
+    "folds": 15,
+    "tie": true
+  },
+  "choice": "Ridge",
+  "numeric_correlations": {
+    "JobLevel": {
+      "JobLevel": 1.0,
+      "TotalWorkingYears": 0.785,
+      "Education": 0.094,
+      "YearsAtCompany": 0.527
+    },
+    "TotalWorkingYears": {
+      "JobLevel": 0.785,
+      "TotalWorkingYears": 1.0,
+      "Education": 0.141,
+      "YearsAtCompany": 0.618
+    },
+    "Education": {
+      "JobLevel": 0.094,
+      "TotalWorkingYears": 0.141,
+      "Education": 1.0,
+      "YearsAtCompany": 0.06
+    },
+    "YearsAtCompany": {
+      "JobLevel": 0.527,
+      "TotalWorkingYears": 0.618,
+      "Education": 0.06,
+      "YearsAtCompany": 1.0
+    }
+  },
+  "coefficients": {
+    "Ridge": {
+      "JobLevel": 0.3946,
+      "JobRole_Sales Representative": -0.3018,
+      "JobRole_Research Director": 0.2901,
+      "JobRole_Laboratory Technician": -0.2443,
+      "JobRole_Manager": 0.243,
+      "JobRole_Research Scientist": -0.2321,
+      "JobRole_Sales Executive": 0.1435,
+      "JobRole_Healthcare Representative": 0.0994,
+      "JobRole_Manufacturing Director": 0.0724,
+      "JobRole_Human Resources": -0.0702,
+      "TotalWorkingYears": 0.064,
+      "Department_Research & Development": 0.0443,
+      "Department_Human Resources": -0.0371,
+      "YearsAtCompany": 0.01,
+      "Department_Sales": -0.0072,
+      "Education": 0.0034
+    },
+    "Lasso": {
+      "JobLevel": 0.3923,
+      "JobRole_Sales Representative": -0.3886,
+      "JobRole_Research Director": 0.224,
+      "JobRole_Laboratory Technician": -0.321,
+      "JobRole_Manager": 0.1733,
+      "JobRole_Research Scientist": -0.3086,
+      "JobRole_Sales Executive": 0.0637,
+      "JobRole_Healthcare Representative": 0.0266,
+      "JobRole_Manufacturing Director": 0.0,
+      "JobRole_Human Resources": -0.1517,
+      "TotalWorkingYears": 0.0636,
+      "Department_Research & Development": 0.045,
+      "Department_Human Resources": -0.0297,
+      "YearsAtCompany": 0.0099,
+      "Department_Sales": 0.0,
+      "Education": 0.0032
+    }
+  }
+}

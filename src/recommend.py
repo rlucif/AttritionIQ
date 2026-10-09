@@ -106,35 +106,77 @@ def simulate_response_matrix(df: pd.DataFrame, observed_frac: float = 0.5,
     return R.mask(rng.random(R.shape) > observed_frac)
 
 
+try:  # numba ships with shap, so it is normally present; the fallback is plain Python
+    from numba import njit
+except ImportError:  # pragma: no cover
+    def njit(f=None, **_):
+        return f if f is not None else (lambda g: g)
+
+
+@njit
+def _sgd_epoch(users, items, vals, order, mu, bu, bi, P, Q, lr, reg):
+    """One SGD pass over the observed cells, in the given order. Compiled with
+    numba (about 100x faster than the Python loop it replaces; same maths)."""
+    n_f = P.shape[1]
+    for k in order:
+        u, i = users[k], items[k]
+        pred = mu + bu[u] + bi[i]
+        for f in range(n_f):
+            pred += P[u, f] * Q[i, f]
+        err = vals[k] - pred
+        bu[u] += lr * (err - reg * bu[u])
+        bi[i] += lr * (err - reg * bi[i])
+        for f in range(n_f):
+            pu = P[u, f]
+            P[u, f] += lr * (err * Q[i, f] - reg * pu)
+            Q[i, f] += lr * (err * pu - reg * Q[i, f])
+
+
 class FunkSVD:
     """Matrix factorisation trained with SGD on observed cells only.
 
         r_hat(u, i) = mu + b_u + b_i + p_u . q_i
     mu = global mean, b = biases, p/q = latent factors, L2 penalty `reg`.
+
+    Defaults from Phase 3 tuning (experiments/phase3_recommender.py): best mean
+    validation RMSE over 3 seeds at 50% density. The surface is flat (top 10
+    configurations within 0.007 RMSE), so these are a sensible default, not a
+    sharp optimum. Pass `val` = (rows, cols, ratings) to record
+    validation RMSE per epoch and keep the best epoch (early stopping).
     """
 
-    def __init__(self, n_factors: int = 4, lr: float = 0.01, reg: float = 0.05,
-                 epochs: int = 30, seed: int = config.RANDOM_STATE):
+    def __init__(self, n_factors: int = 8, lr: float = 0.02, reg: float = 0.05,
+                 epochs: int = 150, seed: int = config.RANDOM_STATE):
         self.n_factors, self.lr, self.reg, self.epochs, self.seed = n_factors, lr, reg, epochs, seed
 
-    def fit(self, R: pd.DataFrame):
-        rng = np.random.default_rng(self.seed)
+    def fit(self, R: pd.DataFrame, val=None):
+        # Own random stream. Phase 3 bug: with default_rng(seed) the first draw
+        # (P, n_users x n_factors) equalled simulate_response_matrix's noise
+        # (same seed, same shape when n_factors = 8), so the model started out
+        # knowing each employee's simulated noise and "beat" the oracle.
+        rng = np.random.default_rng([self.seed, 1])
         M = R.to_numpy(dtype=float)
         n_u, n_i = M.shape
-        self.mu_ = np.nanmean(M)
+        self.mu_ = float(np.nanmean(M))
         self.bu_, self.bi_ = np.zeros(n_u), np.zeros(n_i)
         self.P_ = rng.normal(0, 0.1, (n_u, self.n_factors))
         self.Q_ = rng.normal(0, 0.1, (n_i, self.n_factors))
         users, items = np.where(~np.isnan(M))
-        for _ in range(self.epochs):
-            for k in rng.permutation(len(users)):
-                u, i = users[k], items[k]
-                err = M[u, i] - (self.mu_ + self.bu_[u] + self.bi_[i] + self.P_[u] @ self.Q_[i])
-                self.bu_[u] += self.lr * (err - self.reg * self.bu_[u])
-                self.bi_[i] += self.lr * (err - self.reg * self.bi_[i])
-                pu = self.P_[u].copy()
-                self.P_[u] += self.lr * (err * self.Q_[i] - self.reg * self.P_[u])
-                self.Q_[i] += self.lr * (err * pu - self.reg * self.Q_[i])
+        vals = M[users, items]
+        self.val_rmse_, best = [], (np.inf, None, 0)
+        for ep in range(self.epochs):
+            _sgd_epoch(users, items, vals, rng.permutation(len(users)), self.mu_,
+                       self.bu_, self.bi_, self.P_, self.Q_, self.lr, self.reg)
+            if val is not None:
+                vr, vc, vv = val
+                hat = self.mu_ + self.bu_[vr] + self.bi_[vc] + (self.P_[vr] * self.Q_[vc]).sum(axis=1)
+                rmse = float(np.sqrt(np.mean((np.clip(hat, 1, 5) - vv) ** 2)))
+                self.val_rmse_.append(rmse)
+                if rmse < best[0]:
+                    best = (rmse, (self.bu_.copy(), self.bi_.copy(), self.P_.copy(), self.Q_.copy()), ep + 1)
+        if val is not None:
+            self.bu_, self.bi_, self.P_, self.Q_ = best[1]
+            self.best_epoch_ = best[2]
         self.index_, self.columns_ = R.index, R.columns
         return self
 
@@ -181,8 +223,7 @@ def evaluate_cf(R: pd.DataFrame, test_frac: float = 0.2, seed: int = config.RAND
         "pairwise_ranking_random": 0.5,
         "n_test_ratings": int(len(truth)),
         "data_note": "SIMULATED interaction matrix",
-        # TODO(team): sweep observed_frac (0.2 -> 0.8) and plot RMSE vs density:
-        # it shows how much outcome data the company must collect before CF helps.
+        # Density sweep vs an oracle: experiments/phase3_recommender.py
     }
 
 

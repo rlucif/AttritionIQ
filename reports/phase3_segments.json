@@ -1,0 +1,365 @@
+{
+  "n_rows": 1470,
+  "features": [
+    "MonthlyIncome",
+    "TotalWorkingYears",
+    "YearsAtCompany",
+    "YearsSinceLastPromotion",
+    "JobLevel",
+    "OverTime",
+    "JobSatisfaction",
+    "EnvironmentSatisfaction",
+    "WorkLifeBalance",
+    "DistanceFromHome",
+    "PercentSalaryHike",
+    "TrainingTimesLastYear"
+  ],
+  "k_table": [
+    {
+      "k": 2,
+      "inertia": 14168.4383,
+      "silhouette": 0.2775,
+      "calinski_harabasz": 359.6905,
+      "davies_bouldin": 1.6572,
+      "stability_ari_mean": 0.9747,
+      "stability_ari_std": 0.0203
+    },
+    {
+      "k": 3,
+      "inertia": 12942.4216,
+      "silhouette": 0.1386,
+      "calinski_harabasz": 266.231,
+      "davies_bouldin": 2.1429,
+      "stability_ari_mean": 0.9792,
+      "stability_ari_std": 0.0882
+    },
+    {
+      "k": 4,
+      "inertia": 12246.7108,
+      "silhouette": 0.1092,
+      "calinski_harabasz": 215.2023,
+      "davies_bouldin": 2.3529,
+      "stability_ari_mean": 0.6394,
+      "stability_ari_std": 0.1875
+    },
+    {
+      "k": 5,
+      "inertia": 11598.7259,
+      "silhouette": 0.1289,
+      "calinski_harabasz": 190.7638,
+      "davies_bouldin": 2.2084,
+      "stability_ari_mean": 0.7095,
+      "stability_ari_std": 0.1953
+    },
+    {
+      "k": 6,
+      "inertia": 11028.8036,
+      "silhouette": 0.122,
+      "calinski_harabasz": 175.5184,
+      "davies_bouldin": 2.156,
+      "stability_ari_mean": 0.6825,
+      "stability_ari_std": 0.1721
+    },
+    {
+      "k": 7,
+      "inertia": 10607.5839,
+      "silhouette": 0.1098,
+      "calinski_harabasz": 161.652,
+      "davies_bouldin": 2.0751,
+      "stability_ari_mean": 0.6403,
+      "stability_ari_std": 0.1084
+    },
+    {
+      "k": 8,
+      "inertia": 10178.746,
+      "silhouette": 0.1127,
+      "calinski_harabasz": 153.0971,
+      "davies_bouldin": 1.9291,
+      "stability_ari_mean": 0.7072,
+      "stability_ari_std": 0.1115
+    }
+  ],
+  "k_rule": {
+    "chosen": 3,
+    "reason": "stable k: [3, 4, 5, 6]; best silhouette 0.139; smallest k within 0.01: 3"
+  },
+  "ward": {
+    "height_jumps": [
+      {
+        "k": 2,
+        "merge_height_jump": 29.429
+      },
+      {
+        "k": 3,
+        "merge_height_jump": 10.719
+      },
+      {
+        "k": 4,
+        "merge_height_jump": 2.769
+      },
+      {
+        "k": 5,
+        "merge_height_jump": 3.836
+      },
+      {
+        "k": 6,
+        "merge_height_jump": 3.391
+      },
+      {
+        "k": 7,
+        "merge_height_jump": 1.631
+      },
+      {
+        "k": 8,
+        "merge_height_jump": 1.254
+      }
+    ],
+    "largest_jump_k": 2,
+    "ari_kmeans_vs_ward": 0.8119269358834974
+  },
+  "dbscan": {
+    "min_samples": 24,
+    "eps_knee": 3.268451428125781,
+    "knee_percentile": 86.73469387755102,
+    "clusters": 1,
+    "outliers": 32,
+    "outlier_attrition_rate": 0.0625,
+    "inlier_attrition_rate": 0.16342141863699583,
+    "eps_sensitivity": [
+      {
+        "eps": 2.942,
+        "clusters": 1,
+        "outliers": 99
+      },
+      {
+        "eps": 3.268,
+        "clusters": 1,
+        "outliers": 32
+      },
+      {
+        "eps": 3.595,
+        "clusters": 1,
+        "outliers": 10
+      }
+    ],
+    "skeleton_eps_p90_k5": 2.704724055689802
+  },
+  "profile": [
+    {
+      "cluster": 0,
+      "size": 348,
+      "MonthlyIncome": 4860.078,
+      "TotalWorkingYears": 8.79,
+      "YearsAtCompany": 5.313,
+      "YearsSinceLastPromotion": 1.532,
+      "JobLevel": 1.684,
+      "OverTime": 1.0,
+      "JobSatisfaction": 2.773,
+      "EnvironmentSatisfaction": 2.825,
+      "WorkLifeBalance": 2.733,
+      "DistanceFromHome": 9.417,
+      "PercentSalaryHike": 15.256,
+      "TrainingTimesLastYear": 2.644,
+      "attrition_rate": 0.336
+    },
+    {
+      "cluster": 1,
+      "size": 855,
+      "MonthlyIncome": 4653.427,
+      "TotalWorkingYears": 8.439,
+      "YearsAtCompany": 5.384,
+      "YearsSinceLastPromotion": 1.448,
+      "JobLevel": 1.653,
+      "OverTime": 0.0,
+      "JobSatisfaction": 2.711,
+      "EnvironmentSatisfaction": 2.681,
+      "WorkLifeBalance": 2.77,
+      "DistanceFromHome": 9.25,
+      "PercentSalaryHike": 15.229,
+      "TrainingTimesLastYear": 2.883,
+      "attrition_rate": 0.115
+    },
+    {
+      "cluster": 2,
+      "size": 267,
+      "MonthlyIncome": 14566.749,
+      "TotalWorkingYears": 23.622,
+      "YearsAtCompany": 14.419,
+      "YearsSinceLastPromotion": 5.412,
+      "JobLevel": 3.876,
+      "OverTime": 0.255,
+      "JobSatisfaction": 2.727,
+      "EnvironmentSatisfaction": 2.719,
+      "WorkLifeBalance": 2.772,
+      "DistanceFromHome": 8.715,
+      "PercentSalaryHike": 15.086,
+      "TrainingTimesLastYear": 2.734,
+      "attrition_rate": 0.082
+    }
+  ],
+  "personas_draft": {
+    "2": "Senior veterans",
+    "0": "Overtime crew",
+    "1": "Steady core"
+  },
+  "descriptions": {
+    "0": "OverTime high (+1.6 sd), MonthlyIncome low (-0.3 sd), JobLevel low (-0.3 sd), TotalWorkingYears low (-0.3 sd)",
+    "1": "OverTime low (-0.6 sd), MonthlyIncome low (-0.4 sd), JobLevel low (-0.4 sd), TotalWorkingYears low (-0.4 sd)",
+    "2": "MonthlyIncome high (+1.7 sd), JobLevel high (+1.6 sd), TotalWorkingYears high (+1.6 sd), YearsAtCompany high (+1.2 sd)"
+  },
+  "cramers_v_attrition": {
+    "kmeans_features": 0.2669996201177536,
+    "kmeans_shap_raw_pay_seniority_grouped": 0.19625630174761477
+  },
+  "shap_segments": {
+    "raw_logodds": [
+      {
+        "k": 3,
+        "silhouette": 0.1887,
+        "stability_ari_mean": 0.9789,
+        "cramers_v_attrition": 0.1862
+      },
+      {
+        "k": 4,
+        "silhouette": 0.1577,
+        "stability_ari_mean": 0.7595,
+        "cramers_v_attrition": 0.2077
+      },
+      {
+        "k": 5,
+        "silhouette": 0.1696,
+        "stability_ari_mean": 0.8956,
+        "cramers_v_attrition": 0.2477
+      },
+      {
+        "k": 6,
+        "silhouette": 0.1392,
+        "stability_ari_mean": 0.9539,
+        "cramers_v_attrition": 0.2754
+      }
+    ],
+    "standardised": [
+      {
+        "k": 3,
+        "silhouette": 0.1092,
+        "stability_ari_mean": 0.9572,
+        "cramers_v_attrition": 0.1169
+      },
+      {
+        "k": 4,
+        "silhouette": 0.0771,
+        "stability_ari_mean": 0.9727,
+        "cramers_v_attrition": 0.1617
+      },
+      {
+        "k": 5,
+        "silhouette": 0.0832,
+        "stability_ari_mean": 0.9366,
+        "cramers_v_attrition": 0.1567
+      },
+      {
+        "k": 6,
+        "silhouette": 0.0617,
+        "stability_ari_mean": 0.9107,
+        "cramers_v_attrition": 0.1667
+      }
+    ],
+    "raw_pay_seniority_grouped": [
+      {
+        "k": 3,
+        "silhouette": 0.1938,
+        "stability_ari_mean": 0.9958,
+        "cramers_v_attrition": 0.1963
+      },
+      {
+        "k": 4,
+        "silhouette": 0.196,
+        "stability_ari_mean": 0.9999,
+        "cramers_v_attrition": 0.2642
+      },
+      {
+        "k": 5,
+        "silhouette": 0.1565,
+        "stability_ari_mean": 0.9583,
+        "cramers_v_attrition": 0.2637
+      },
+      {
+        "k": 6,
+        "silhouette": 0.1732,
+        "stability_ari_mean": 0.9578,
+        "cramers_v_attrition": 0.3327
+      }
+    ]
+  },
+  "shap_k_rule": 3,
+  "shap_segment_profiles": {
+    "0": {
+      "attrition": {
+        "size": 343,
+        "attrition_rate": 0.277
+      },
+      "top_risk_drivers": {
+        "JobRole": 1.63,
+        "YearsWithCurrManager": 0.096,
+        "StockOptionLevel": 0.069,
+        "JobInvolvement": 0.06
+      },
+      "top_protective": {
+        "Pay & seniority": -0.292,
+        "OverTime": -0.192
+      }
+    },
+    "1": {
+      "attrition": {
+        "size": 182,
+        "attrition_rate": 0.038
+      },
+      "top_risk_drivers": {
+        "Pay & seniority": 1.011,
+        "YearsSinceLastPromotion": 0.272,
+        "YearsAtCompany": 0.161,
+        "NumCompaniesWorked": 0.129
+      },
+      "top_protective": {
+        "JobRole": -2.688,
+        "YearsWithCurrManager": -0.217
+      }
+    },
+    "2": {
+      "attrition": {
+        "size": 945,
+        "attrition_rate": 0.143
+      },
+      "top_risk_drivers": {
+        "StockOptionLevel": 0.051,
+        "JobInvolvement": 0.038,
+        "PerformanceRating": 0.024,
+        "DistanceFromHome": 0.015
+      },
+      "top_protective": {
+        "Pay & seniority": -0.126,
+        "OverTime": -0.119
+      }
+    }
+  },
+  "shap_variant_profiled": "raw_pay_seniority_grouped",
+  "note_shap_in_sample": "SHAP clusters use a supervised model's output, and 80% of rows were in its training data, so their link to attrition is expected and in-sample.",
+  "rfm_bands": {
+    "At risk": {
+      "size": 609,
+      "attrition_rate": 0.153
+    },
+    "Invested": {
+      "size": 115,
+      "attrition_rate": 0.157
+    },
+    "Neglected": {
+      "size": 231,
+      "attrition_rate": 0.169
+    },
+    "Steady": {
+      "size": 515,
+      "attrition_rate": 0.169
+    }
+  }
+}

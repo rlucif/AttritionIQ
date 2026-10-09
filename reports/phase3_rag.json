@@ -1,0 +1,466 @@
+{
+  "n_questions": 33,
+  "n_chunks": 13,
+  "tfidf_l2": {
+    "cosine": {
+      "hit_at_1": 0.7878787878787878,
+      "hit_at_3": 0.8787878787878788,
+      "mrr": 0.846969696969697,
+      "not_first": [
+        {
+          "question": "He is unhappy with his manager. What support is available?",
+          "expected": "Manager Relationship and Team Fit",
+          "got": "Overtime and Workload",
+          "rank": 6
+        },
+        {
+          "question": "How do we talk to someone who might quit?",
+          "expected": "Stay Interviews and Exit Process",
+          "got": "(no word in common)",
+          "rank": null
+        },
+        {
+          "question": "After a late-night release, how soon can I ask him to log back on?",
+          "expected": "Overtime and Workload",
+          "got": "Responsible Use of People Analytics",
+          "rank": 4
+        },
+        {
+          "question": "When does the next round of promotion decisions happen?",
+          "expected": "Promotion and Career Progression",
+          "got": "Responsible Use of People Analytics",
+          "rank": 2
+        },
+        {
+          "question": "Who signs off if I want to move someone up a level mid-year?",
+          "expected": "Promotion and Career Progression",
+          "got": "Learning and Development",
+          "rank": 3
+        },
+        {
+          "question": "How long must someone wait before applying for a job in another department?",
+          "expected": "Internal Mobility and Role Rotation",
+          "got": "Compensation and Pay Equity",
+          "rank": 2
+        },
+        {
+          "question": "What should a conversation with an employee we fear is about to resign cover?",
+          "expected": "Stay Interviews and Exit Process",
+          "got": "Manager Relationship and Team Fit",
+          "rank": 5
+        }
+      ]
+    },
+    "euclidean": {
+      "hit_at_1": 0.7878787878787878,
+      "hit_at_3": 0.8787878787878788,
+      "mrr": 0.846969696969697,
+      "not_first": [
+        {
+          "question": "He is unhappy with his manager. What support is available?",
+          "expected": "Manager Relationship and Team Fit",
+          "got": "Overtime and Workload",
+          "rank": 6
+        },
+        {
+          "question": "How do we talk to someone who might quit?",
+          "expected": "Stay Interviews and Exit Process",
+          "got": "(no word in common)",
+          "rank": null
+        },
+        {
+          "question": "After a late-night release, how soon can I ask him to log back on?",
+          "expected": "Overtime and Workload",
+          "got": "Responsible Use of People Analytics",
+          "rank": 4
+        },
+        {
+          "question": "When does the next round of promotion decisions happen?",
+          "expected": "Promotion and Career Progression",
+          "got": "Responsible Use of People Analytics",
+          "rank": 2
+        },
+        {
+          "question": "Who signs off if I want to move someone up a level mid-year?",
+          "expected": "Promotion and Career Progression",
+          "got": "Learning and Development",
+          "rank": 3
+        },
+        {
+          "question": "How long must someone wait before applying for a job in another department?",
+          "expected": "Internal Mobility and Role Rotation",
+          "got": "Compensation and Pay Equity",
+          "rank": 2
+        },
+        {
+          "question": "What should a conversation with an employee we fear is about to resign cover?",
+          "expected": "Stay Interviews and Exit Process",
+          "got": "Manager Relationship and Team Fit",
+          "rank": 5
+        }
+      ]
+    },
+    "n_questions": 33,
+    "n_chunks": 13,
+    "embedding_backend": "tfidf",
+    "vector_norm_range": [
+      0.9999999403953552,
+      1.0
+    ]
+  },
+  "tfidf_raw": {
+    "cosine": {
+      "hit_at_1": 0.7878787878787878,
+      "hit_at_3": 0.8787878787878788,
+      "mrr": 0.846969696969697,
+      "not_first": [
+        {
+          "question": "He is unhappy with his manager. What support is available?",
+          "expected": "Manager Relationship and Team Fit",
+          "got": "Overtime and Workload",
+          "rank": 6
+        },
+        {
+          "question": "How do we talk to someone who might quit?",
+          "expected": "Stay Interviews and Exit Process",
+          "got": "(no word in common)",
+          "rank": null
+        },
+        {
+          "question": "After a late-night release, how soon can I ask him to log back on?",
+          "expected": "Overtime and Workload",
+          "got": "Responsible Use of People Analytics",
+          "rank": 4
+        },
+        {
+          "question": "When does the next round of promotion decisions happen?",
+          "expected": "Promotion and Career Progression",
+          "got": "Responsible Use of People Analytics",
+          "rank": 2
+        },
+        {
+          "question": "Who signs off if I want to move someone up a level mid-year?",
+          "expected": "Promotion and Career Progression",
+          "got": "Learning and Development",
+          "rank": 3
+        },
+        {
+          "question": "How long must someone wait before applying for a job in another department?",
+          "expected": "Internal Mobility and Role Rotation",
+          "got": "Compensation and Pay Equity",
+          "rank": 2
+        },
+        {
+          "question": "What should a conversation with an employee we fear is about to resign cover?",
+          "expected": "Stay Interviews and Exit Process",
+          "got": "Manager Relationship and Team Fit",
+          "rank": 5
+        }
+      ]
+    },
+    "euclidean": {
+      "hit_at_1": 0.12121212121212122,
+      "hit_at_3": 0.3333333333333333,
+      "mrr": 0.3262145262145262,
+      "not_first": [
+        {
+          "question": "My team member has been doing long hours for weeks. What can I do?",
+          "expected": "Overtime and Workload",
+          "got": "Compensation and Pay Equity",
+          "rank": 2
+        },
+        {
+          "question": "Can I give time off to someone who worked a lot of overtime?",
+          "expected": "Overtime and Workload",
+          "got": "Compensation and Pay Equity",
+          "rank": 2
+        },
+        {
+          "question": "She hasn't been promoted in four years. What does policy say?",
+          "expected": "Promotion and Career Progression",
+          "got": "Compensation and Pay Equity",
+          "rank": 9
+        },
+        {
+          "question": "How do off-cycle promotions get approved?",
+          "expected": "Promotion and Career Progression",
+          "got": "Compensation and Pay Equity",
+          "rank": 9
+        },
+        {
+          "question": "Can we offer a retention bonus to a critical engineer?",
+          "expected": "Retention Grants and Stock Options",
+          "got": "Compensation and Pay Equity",
+          "rank": 6
+        },
+        {
+          "question": "The employee has no stock options. Can they get some?",
+          "expected": "Retention Grants and Stock Options",
+          "got": "Compensation and Pay Equity",
+          "rank": 6
+        },
+        {
+          "question": "He is unhappy with his manager. What support is available?",
+          "expected": "Manager Relationship and Team Fit",
+          "got": "Compensation and Pay Equity",
+          "rank": 7
+        },
+        {
+          "question": "Can an employee move to a different team?",
+          "expected": "Manager Relationship and Team Fit",
+          "got": "Compensation and Pay Equity",
+          "rank": 6
+        },
+        {
+          "question": "She had no training last year. What can we offer?",
+          "expected": "Learning and Development",
+          "got": "Compensation and Pay Equity",
+          "rank": 6
+        },
+        {
+          "question": "Is mentoring available for new joiners?",
+          "expected": "Learning and Development",
+          "got": "Compensation and Pay Equity",
+          "rank": 6
+        },
+        {
+          "question": "Her commute is very long. Can she work from home?",
+          "expected": "Flexible and Remote Work",
+          "got": "Compensation and Pay Equity",
+          "rank": 9
+        },
+        {
+          "question": "Can we reduce someone's business travel?",
+          "expected": "Flexible and Remote Work",
+          "got": "Compensation and Pay Equity",
+          "rank": 10
+        },
+        {
+          "question": "He has been in the same role for six years and is bored. Options?",
+          "expected": "Internal Mobility and Role Rotation",
+          "got": "Compensation and Pay Equity",
+          "rank": 4
+        },
+        {
+          "question": "Do internal applicants get priority for open positions?",
+          "expected": "Internal Mobility and Role Rotation",
+          "got": "Compensation and Pay Equity",
+          "rank": 4
+        },
+        {
+          "question": "How do we talk to someone who might quit?",
+          "expected": "Stay Interviews and Exit Process",
+          "got": "(no word in common)",
+          "rank": null
+        },
+        {
+          "question": "Are exit interviews done for every leaver?",
+          "expected": "Stay Interviews and Exit Process",
+          "got": "Compensation and Pay Equity",
+          "rank": 4
+        },
+        {
+          "question": "Can the attrition score be used to decide who gets fired?",
+          "expected": "Responsible Use of People Analytics",
+          "got": "Compensation and Pay Equity",
+          "rank": 2
+        },
+        {
+          "question": "Is gender used in the risk model?",
+          "expected": "Responsible Use of People Analytics",
+          "got": "Compensation and Pay Equity",
+          "rank": 2
+        },
+        {
+          "question": "Is there a legal ceiling on how many hours a week someone can put in?",
+          "expected": "Overtime and Workload",
+          "got": "Compensation and Pay Equity",
+          "rank": 2
+        },
+        {
+          "question": "After a late-night release, how soon can I ask him to log back on?",
+          "expected": "Overtime and Workload",
+          "got": "Compensation and Pay Equity",
+          "rank": 3
+        },
+        {
+          "question": "When does the next round of promotion decisions happen?",
+          "expected": "Promotion and Career Progression",
+          "got": "Compensation and Pay Equity",
+          "rank": 10
+        },
+        {
+          "question": "Who signs off if I want to move someone up a level mid-year?",
+          "expected": "Promotion and Career Progression",
+          "got": "Compensation and Pay Equity",
+          "rank": 9
+        },
+        {
+          "question": "How long before shares granted to keep someone are fully theirs?",
+          "expected": "Retention Grants and Stock Options",
+          "got": "Compensation and Pay Equity",
+          "rank": 6
+        },
+        {
+          "question": "How often should I be catching up privately with each person who reports to me?",
+          "expected": "Manager Relationship and Team Fit",
+          "got": "Compensation and Pay Equity",
+          "rank": 6
+        },
+        {
+          "question": "Is there money for someone to get a professional certification?",
+          "expected": "Learning and Development",
+          "got": "Compensation and Pay Equity",
+          "rank": 6
+        },
+        {
+          "question": "She asked to work compressed hours and I said no straight away. Was that okay?",
+          "expected": "Flexible and Remote Work",
+          "got": "Compensation and Pay Equity",
+          "rank": 9
+        },
+        {
+          "question": "How long must someone wait before applying for a job in another department?",
+          "expected": "Internal Mobility and Role Rotation",
+          "got": "Compensation and Pay Equity",
+          "rank": 4
+        },
+        {
+          "question": "What should a conversation with an employee we fear is about to resign cover?",
+          "expected": "Stay Interviews and Exit Process",
+          "got": "Compensation and Pay Equity",
+          "rank": 5
+        },
+        {
+          "question": "Do we need to tell staff before we start using an AI tool that scores them?",
+          "expected": "Responsible Use of People Analytics",
+          "got": "Compensation and Pay Equity",
+          "rank": 2
+        }
+      ]
+    },
+    "n_questions": 33,
+    "n_chunks": 13,
+    "embedding_backend": "tfidf",
+    "vector_norm_range": [
+      13.764774322509766,
+      33.08493423461914
+    ]
+  },
+  "minilm": {
+    "cosine": {
+      "hit_at_1": 0.8787878787878788,
+      "hit_at_3": 0.9696969696969697,
+      "mrr": 0.9303030303030303,
+      "not_first": [
+        {
+          "question": "He has been in the same role for six years and is bored. Options?",
+          "expected": "Internal Mobility and Role Rotation",
+          "got": "Manager Relationship and Team Fit",
+          "rank": 2
+        },
+        {
+          "question": "How do we talk to someone who might quit?",
+          "expected": "Stay Interviews and Exit Process",
+          "got": "Manager Relationship and Team Fit",
+          "rank": 2
+        },
+        {
+          "question": "After a late-night release, how soon can I ask him to log back on?",
+          "expected": "Overtime and Workload",
+          "got": "Flexible and Remote Work",
+          "rank": 5
+        },
+        {
+          "question": "Who signs off if I want to move someone up a level mid-year?",
+          "expected": "Promotion and Career Progression",
+          "got": "Manager Relationship and Team Fit",
+          "rank": 2
+        }
+      ]
+    },
+    "euclidean": {
+      "hit_at_1": 0.8787878787878788,
+      "hit_at_3": 0.9696969696969697,
+      "mrr": 0.9303030303030303,
+      "not_first": [
+        {
+          "question": "He has been in the same role for six years and is bored. Options?",
+          "expected": "Internal Mobility and Role Rotation",
+          "got": "Manager Relationship and Team Fit",
+          "rank": 2
+        },
+        {
+          "question": "How do we talk to someone who might quit?",
+          "expected": "Stay Interviews and Exit Process",
+          "got": "Manager Relationship and Team Fit",
+          "rank": 2
+        },
+        {
+          "question": "After a late-night release, how soon can I ask him to log back on?",
+          "expected": "Overtime and Workload",
+          "got": "Flexible and Remote Work",
+          "rank": 5
+        },
+        {
+          "question": "Who signs off if I want to move someone up a level mid-year?",
+          "expected": "Promotion and Career Progression",
+          "got": "Manager Relationship and Team Fit",
+          "rank": 2
+        }
+      ]
+    },
+    "n_questions": 33,
+    "n_chunks": 13,
+    "embedding_backend": "sentence-transformers",
+    "vector_norm_range": [
+      0.9999999403953552,
+      1.0000001192092896
+    ]
+  },
+  "table": [
+    {
+      "setup": "tfidf_l2",
+      "metric": "cosine",
+      "hit_at_1": 0.7879,
+      "hit_at_3": 0.8788,
+      "mrr": 0.847
+    },
+    {
+      "setup": "tfidf_l2",
+      "metric": "euclidean",
+      "hit_at_1": 0.7879,
+      "hit_at_3": 0.8788,
+      "mrr": 0.847
+    },
+    {
+      "setup": "tfidf_raw",
+      "metric": "cosine",
+      "hit_at_1": 0.7879,
+      "hit_at_3": 0.8788,
+      "mrr": 0.847
+    },
+    {
+      "setup": "tfidf_raw",
+      "metric": "euclidean",
+      "hit_at_1": 0.1212,
+      "hit_at_3": 0.3333,
+      "mrr": 0.3262
+    },
+    {
+      "setup": "minilm",
+      "metric": "cosine",
+      "hit_at_1": 0.8788,
+      "hit_at_3": 0.9697,
+      "mrr": 0.9303
+    },
+    {
+      "setup": "minilm",
+      "metric": "euclidean",
+      "hit_at_1": 0.8788,
+      "hit_at_3": 0.9697,
+      "mrr": 0.9303
+    }
+  ],
+  "decision": "minilm/cosine"
+}

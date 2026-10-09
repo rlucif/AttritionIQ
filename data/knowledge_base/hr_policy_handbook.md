@@ -1,59 +1,74 @@
-# AttritionIQ Sample HR Policy Handbook
+# AttritionIQ Demo Co. - HR Policy Handbook
 
-> TEMPLATE. This is a fictional handbook for a fictional company, written so
-> the RAG pipeline has something to retrieve. Every value in [square brackets]
-> is a placeholder for your team to fill in or base on a real public policy
-> you cite. Keep the "## " headings: they are the retrieval units and the
-> labels used in retrieval_eval.csv.
+> FICTIONAL company, written so the HR Copilot (RAG) has policies to retrieve.
+> Each rule is either based on a cited public source (law, or GitLab's public
+> handbook, an openly published real-company HR handbook) or marked
+> "company choice". Full references: data/knowledge_base/SOURCES.md.
+> Keep the "## " headings: they are the retrieval units and the labels used in
+> retrieval_eval.csv.
 
 ## Overtime and Workload
 
-Regular overtime beyond [N] hours per week for more than [N] consecutive weeks must be reviewed by the line manager and HR business partner. Managers may redistribute work, approve temporary contract support, or adjust project deadlines to bring workload back within limits.
+Average working time, including overtime, must not exceed 48 hours per week, averaged over a reference period of up to four months (EU Working Time Directive 2003/88/EC, Articles 6 and 16). Every employee is entitled to at least 11 consecutive hours of rest in each 24-hour period and an uninterrupted weekly rest of 24 hours plus those 11 hours (Articles 3 and 5).
 
-Employees who have worked sustained overtime are eligible for compensatory time off of [N] days per quarter, subject to manager approval.
+When an employee works overtime for more than four consecutive weeks (company choice), the line manager and the HR business partner review the workload together. Managers may redistribute work, bring in temporary contract support or move project deadlines to bring hours back within limits.
+
+Employees who have worked sustained overtime can take time off in lieu of up to two days per quarter, with manager approval (company choice). Where local law requires overtime pay instead of time off, local law applies.
 
 ## Promotion and Career Progression
 
-Every employee is eligible for a promotion review once a year during the annual cycle. Employees who have not been promoted for [N] or more years must be discussed in the talent review, and the manager must record either a development plan or the reasons promotion is not yet appropriate.
+Promotions are decided in a calibrated promotion cycle held twice a year (based on GitLab's semi-annual calibrated promotion process). Before each cycle, managers review every direct report for promotion readiness and business need, and department leadership and the HR business partner calibrate the proposed promotions together.
 
-Off-cycle promotions require approval from the department head and HR, and are limited to [N]% of the department headcount per year.
+Any employee who has not been promoted for three or more years must be discussed at the calibration session, and the manager records either a development plan or the reasons promotion is not yet appropriate (company choice).
+
+A promotion outside the two cycles needs approval from the department head and HR, and is reserved for clear business need such as a change of scope (company choice).
 
 ## Compensation and Pay Equity
 
-Salaries are benchmarked against internal pay bands for each job level and role. Employees paid below the band minimum, or more than [N]% below the median of peers with the same level and role, are flagged for a pay equity adjustment.
+Salary ranges are set from market survey data for each role and level. The midpoint of each range targets the 50th percentile of the market, and the range minimum is 80% of the midpoint (based on GitLab's compensation ranges). Critical technical roles may target the 75th percentile (GitLab).
 
-Off-cycle salary adjustments of up to [N]% may be approved by the department head. Larger adjustments require HR director approval.
+An employee paid below the range minimum is flagged for a pay adjustment at the next review. If the average pay of women and men in the same category of workers differs by 5% or more and the gap cannot be justified by objective, gender-neutral criteria, it must be corrected within six months; otherwise a joint pay assessment with worker representatives is required (EU Pay Transparency Directive 2023/970, Article 10).
+
+The department head may approve an off-cycle salary adjustment of up to 10%; larger adjustments need HR director approval (company choice).
 
 ## Retention Grants and Stock Options
 
-Employees in critical roles may receive a one-time retention grant of stock options or a cash retention bonus, vesting over [N] years. Retention grants require a written business case from the manager and approval from the HR director.
+Employees in critical roles may receive a retention grant of restricted stock units, vesting over two to four years (based on GitLab's RSU vesting terms), or a one-time cash retention bonus (company choice). A retention grant needs a written business case from the manager and approval from the HR director.
 
-Employees currently at stock option level 0 may be nominated for the long-term incentive plan at the annual review.
+Employees at stock option level 0 may be nominated for an equity grant at the annual compensation review (company choice). Equity is a long-term tool: it is not a substitute for fixing a pay gap that the compensation review has found.
 
 ## Manager Relationship and Team Fit
 
-Managers hold one-to-one meetings with each direct report at least [N] times a month. Where an employee reports low satisfaction with their working relationship or environment, the HR business partner may facilitate a mediated conversation or a confidential stay interview.
+Managers hold a one-to-one meeting with each direct report at least once a week, and an engagement check-in at least every six months (based on GitLab's guidance on 1-1s and engagement check-ins). The one-to-one agenda is shared, so the employee can add topics at any time.
 
-Employees may request a transfer to a different team after [N] months in their current team, without needing a reason.
+Where an employee reports low satisfaction with their manager, team relationships or working environment, the HR business partner may facilitate a mediated conversation or a confidential stay interview. An employee may apply to move to a different team after six months in their current role, without needing a reason (based on GitLab's six-month time-in-role rule for internal applicants).
 
 ## Learning and Development
 
-Each employee has an annual learning budget of [amount] and at least [N] training days per year. Employees with no training in the past year are prioritised for the next learning cycle. Mentoring pairs are offered to employees in their first two years and to anyone moving into a new role.
+Full-time employees with at least three months of service can claim up to $10,000 a year for external learning: courses, certifications, conferences, professional memberships, language courses, and coaching or mentoring (based on GitLab's Growth and Development Fund). Employees on a performance improvement plan are not eligible while the plan runs (GitLab). Travel to events is claimed separately.
+
+Employees who had no training in the past year are offered a place in the next learning cycle first (company choice). Mentoring pairs are offered to employees in their first two years and to anyone moving into a new role (company choice).
 
 ## Flexible and Remote Work
 
-Employees may work remotely up to [N] days per week where the role allows. Employees with a long commute may request additional remote days or a shifted working pattern. Frequent business travel can be reduced on request where an alternative arrangement covers the business need.
+Where the role allows, employees may work remotely up to three days a week (company choice). Every employee may ask for a flexible working pattern, such as different hours, a compressed week or more remote days, from their first day. Employees can make two such requests in any 12-month period; the manager must discuss a request with the employee before turning it down, and must give a decision within two months (based on the UK Employment Relations (Flexible Working) Act 2023).
+
+Employees with a long commute may ask for extra remote days or shifted hours under this process. Frequent business travel can be reduced on request where another arrangement covers the business need (company choice).
 
 ## Internal Mobility and Role Rotation
 
-Employees who have spent [N] or more years in the same role may apply for internal rotations or open internal positions before they are advertised externally. Internal moves keep the employee's tenure and benefits.
+Open positions are advertised internally before they are advertised externally (company choice). Employees become eligible to apply for an internal position after six months in their current role (based on GitLab's internal hiring rule) and must tell their current manager or HR business partner before applying.
+
+Employees who have spent three or more years in the same role may also ask for a rotation of six to twelve months into another team (company choice). Internal moves keep the employee's tenure and benefits.
 
 ## Stay Interviews and Exit Process
 
-HR conducts stay interviews with employees identified as at risk of leaving, focusing on what would make them stay. Exit interviews are held with every leaver, and themes are reported to department heads each quarter.
+HR conducts stay interviews with employees identified as at risk of leaving. A stay interview asks what keeps the employee here and what might make them leave, and ends with agreed follow-up actions and a date to review them. Exit interviews are offered to every leaver, and the themes are reported to department heads each quarter (company choice).
 
 Any use of predictive attrition scores must follow the Responsible Use of People Analytics section.
 
 ## Responsible Use of People Analytics
 
-Attrition risk scores support conversations; they never decide promotion, pay or dismissal on their own. Scores must not use protected characteristics such as gender, age or marital status as inputs. Employees may ask what data about them is used, and every flagged score is logged for audit.
+Attrition risk scores support conversations; they never decide promotion, pay or dismissal on their own. Employees have the right not to be subject to a decision based solely on automated processing that significantly affects them (EU General Data Protection Regulation, Article 22). Under the EU AI Act, AI systems used for decisions on promotion or termination, or to monitor and evaluate employees' performance and behaviour, are high-risk (Regulation 2024/1689, Annex III, point 4), and employers must inform workers' representatives and affected employees before using such a system at work (Article 26(7)).
+
+Scores must not use protected characteristics such as gender, age or marital status as inputs (company choice, tested in the model's fairness report). Employees may ask what data about them is used, and every flagged score is logged for audit.

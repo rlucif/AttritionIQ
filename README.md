@@ -1,6 +1,6 @@
 # AttritionIQ
 
-Employee attrition risk engine for HR leaders. It predicts who is likely to leave, explains why, recommends retention actions, forecasts workforce loss and answers policy questions, all in one Streamlit app.
+Employee attrition risk engine for HR leaders. It predicts who is likely to leave, explains why, recommends retention actions, forecasts workforce loss and answers policy questions, all in one Streamlit app with four pages: **Overview** (who is at risk and what it is worth), **Employee deep-dive** (why → what-if → retention plan → HR copilot), **Workforce** (segments, forecast, pay fairness) and **Model & trust** (model card, fairness, audit log). Business assumptions sit in one panel shared by every page.
 
 Data Science for Managers capstone. Covers all five sample project tracks.
 
@@ -34,7 +34,12 @@ streamlit run app.py
 ## Repository layout
 
 ```
-app.py                     Streamlit app (7 tabs)
+app.py                     Streamlit entry point: loads the model, shared assumptions, top navigation
+views/                     the four pages (overview, employee, workforce, trust)
+ui/                        theme (CSS), motion (GSAP) and HTML blocks used by the pages
+static/                    self-hosted GSAP 3.12.5 and fonts (Instrument Sans, Bricolage Grotesque; SIL OFL)
+.streamlit/config.toml     dark theme inspired by gsap.com; enables static file serving
+app_classic.py             previous single-page layout (7 tabs), kept as a fallback
 train.py                   end-to-end training pipeline
 src/
   config.py                paths, settings, business assumptions (with sources)
@@ -55,6 +60,10 @@ notebooks/                 EDA and experiments
 tests/                     pytest smoke tests
 docs/                      plan, architecture, Q&A prep, vibe coding log
 ```
+
+## Front-end and motion
+
+The look takes its cue from [gsap.com](https://gsap.com/core/): dark canvas, cream type, one accent colour per page. Motion uses GSAP: the Overview's workforce dots stagger in from the centre, KPIs count from their old value when you change an assumption, the risk dial sweeps between employees and the step headers animate as you scroll. All motion is off when the operating system asks for reduced motion, and every number is in the HTML first, so the app reads correctly without JavaScript.
 
 ## Data sources
 

@@ -13,12 +13,13 @@ streamlit==1.65.0
 joblib==1.6.0
 faiss-cpu==1.15.1
 pytest==9.1.1
+# Gemini client for the live retention brief (decision 3). Without GEMINI_API_KEY a template brief is shown.
+google-genai==2.29.0
 
 # --- Optional (uncomment what you use) ---
 # Better embeddings for the HR Copilot (pulls in PyTorch, ~1 GB). Without it, TF-IDF is used.
 # sentence-transformers
-# LLM providers for the retention brief. Without a key, a template brief is shown.
-# google-genai
+# Alternative LLM provider for the retention brief.
 # anthropic
 # Second forecasting model to compare against ARIMA
 # prophet

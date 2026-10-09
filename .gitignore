@@ -12,6 +12,8 @@ data/external/*.csv
 # keep the JOLTS snapshot used for the reported results (FRED revises data)
 !data/external/JTSQUR.csv
 models/*.joblib
+# the deployed site loads this bundle (Phase 6); it comes from the full README run and matches reports/metrics.json
+!models/attritioniq_bundle.joblib
 # reports/figures/*.png are committed from the Phase 5 freeze run: the Model & trust page
 # and the slides use them, and the deployed site may not run train.py
 reports/audit_log.csv

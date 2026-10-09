@@ -14,7 +14,7 @@ Run 2026-10-09 against `eda/phase-1` at `afa1200`, with the rules fixed beforeha
 | C6 | `docs/ARCHITECTURE.md` matches the code | **Fixed.** See drift list |
 | C7 | README truthfulness | **Fixed.** See drift list |
 | C8 | Slide figures committed | **Fixed.** `reports/figures/*.png` no longer git-ignored (0.9 MB) |
-| C9 | Second machine (Windows laptop) | **Pending, Raj** (commands below) |
+| C9 | Second machine (Windows laptop) | **Pass** (Raj, 2026-10-09). Frozen as merge `b1c2a19` on `main`, tag `v1.0-freeze`; `pytest -q` re-run on a fresh checkout of the tag: 25 passed |
 
 ## C3: what reproduced and what did not
 

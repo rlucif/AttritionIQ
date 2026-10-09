@@ -71,6 +71,21 @@ docs/                      plan, architecture, Q&A prep, vibe coding log
 
 The look takes its cue from [gsap.com](https://gsap.com/core/): dark canvas, cream type, one accent colour per page. Motion uses GSAP: the Overview's workforce dots stagger in from the centre, KPIs count from their old value when you change an assumption, the risk dial sweeps between employees and the step headers animate as you scroll. All motion is off when the operating system asks for reduced motion, and every number is in the HTML first, so the app reads correctly without JavaScript.
 
+## Live app (Streamlit Community Cloud)
+
+The live site runs on Streamlit Community Cloud's free tier, straight from `main`. It uses the committed `models/attritioniq_bundle.joblib` (from the reference run below), so the host never runs `train.py` or downloads the dataset. Setup, done once in the Community Cloud dashboard:
+
+1. **Create app** → repository `rlucif/AttritionIQ`, branch `main`, main file `app.py`, custom subdomain `attritioniq`.
+2. **Advanced settings** → Python 3.13 (the tested version). Secrets (TOML; top-level keys become environment variables):
+   ```toml
+   LLM_PROVIDER = "gemini"
+   GEMINI_API_KEY = "..."
+   LLM_MODEL = "<current Gemini model name>"
+   ```
+3. Deploy. Every push to `main` redeploys.
+
+The copilot runs the TF-IDF retriever on the host (no PyTorch). The app sleeps after 12 hours without visits; open it a few minutes before a demo to wake it. The audit log on the Model & trust page lives on the host's disk and resets when the app restarts.
+
 ## Data sources
 
 * **IBM HR Analytics Employee Attrition & Performance**: 1,470 employees, 35 columns. It is a synthetic dataset created by IBM data scientists, not real employee records. [Kaggle](https://www.kaggle.com/datasets/pavansubhasht/ibm-hr-analytics-attrition-dataset); the download script uses IBM's copy on GitHub.
@@ -90,7 +105,7 @@ The look takes its cue from [gsap.com](https://gsap.com/core/): dark canvas, cre
 
 ```bash
 pip install sentence-transformers           # real embeddings instead of TF-IDF
-pip install google-genai                    # or: pip install anthropic
+pip install anthropic                       # only for the Claude option; google-genai is in requirements.txt
 export LLM_PROVIDER=gemini                  # or anthropic
 export GEMINI_API_KEY=...                   # or ANTHROPIC_API_KEY=...
 export LLM_MODEL=<current model name from the provider's docs>

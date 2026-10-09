@@ -117,6 +117,6 @@ On 294 employees the model had never seen (47 of whom actually left):
 - The employee data is a **practice dataset made by IBM**, not real records.
 - The cost of a retention effort and how often it works are **our estimates**. The app lets you change them.
 - The history of which actions worked is **simulated**, because no real history exists.
-- The HR handbook is a **template we wrote**.
+- **We wrote** the HR handbook. Its rules come from public sources (EU and UK law, GitLab's public handbook) or are marked as our company's choice.
 
 *Setup and run instructions are in `README.md`. For the detailed version, see `README_Management.md`.*

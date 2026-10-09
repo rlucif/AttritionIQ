@@ -243,7 +243,7 @@ LLM writes the brief using ONLY the retrieved clauses + SHAP drivers
 1. **Synthetic data:** the IBM dataset is not real employee records; its currency and label window are undocumented.
 2. **Team assumptions:** intervention cost (1 month of salary) and success rate (40%) are estimates, which is why they are adjustable and stress-tested.
 3. **Simulated CF matrix:** no real intervention history exists, so CF demonstrates the pipeline, not the effectiveness of the interventions.
-4. **Template handbook:** the HR policy text is a template; bracketed values are placeholders.
+4. **Our own handbook:** we wrote the HR policy text. Each value is taken from a cited public source (EU and UK law, GitLab's public handbook) or marked "company choice".
 5. **Correlation, not causation:** SHAP, what-if and elasticity show model sensitivity, not proven cause and effect.
 6. **Macro link:** we assume company attrition tracks the US quits rate; this only nudges the base rate.
 

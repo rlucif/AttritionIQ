@@ -55,7 +55,8 @@ Every member should be able to answer all of these. Draft answers are starting p
 - **What is RAG?** Retrieve relevant policy text, then make the LLM answer only from it, citing sections. Reduces invented answers.
 - **Cosine vs Euclidean?** Cosine compares direction; Euclidean also counts vector length. On L2-normalised vectors (e.g. TF-IDF) they rank results identically, because squared distance = 2 - 2 x cosine.
 - **How did you evaluate retrieval?** 33 hand-labelled manager questions, worded differently from the handbook and written before any retrieval run: TF-IDF hit@1 0.79, hit@3 0.88, MRR 0.85. On un-normalised TF-IDF, Euclidean collapses (MRR 0.33) because long chunks sit far from short questions; cosine is unaffected.
-- **Where does TF-IDF fail?** Vocabulary mismatch: "quit" vs "leave", "sign off" vs "approval". One question shares no word with the handbook at all; the app now says "no policy found" instead of returning a random section. Sentence embeddings are the fix to test.
+- **Where does TF-IDF fail?** Vocabulary mismatch: "quit" vs "leave", "sign off" vs "approval". One question shares no word with the handbook at all; the app now says "no policy found" instead of returning a random section. Sentence embeddings fixed most of it: hit@1 0.88 vs 0.79, hit@3 0.97 vs 0.88, MRR 0.93 vs 0.85, so the app uses MiniLM and falls back to TF-IDF if the library is missing.
+- **Which LLM?** Gemini 3.8 Flash via Google AI Studio, key in an environment variable. The prompt allows only the retrieved clauses, forces [section] citations and says "linked to", not "caused by"; with no key the app shows the grounded inputs instead.
 - **Where do the policies come from?** Each rule cites the EU Working Time, Pay Transparency, GDPR and AI Act texts, the UK Flexible Working Act 2023, or GitLab's public handbook; the rest is marked "company choice". See data/knowledge_base/SOURCES.md.
 
 ## Engineering

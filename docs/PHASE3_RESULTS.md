@@ -2,7 +2,7 @@
 
 Plan and decision rules: `docs/PHASE3_PLAN.md` (written before these runs). Every number below comes from the `reports/phase3_*.json` file of the matching script in `experiments/` (segments, recommender, paymodel, forecast, rag). All five choices are wired into `train.py`.
 
-Status: all four tracks done. Open items: persona names (team approval), the sentence-embedding comparison (must run on a laptop), and an LLM API key for the live brief.
+Status: Phase 3 closed (2026-10-09). Persona names approved by the team; sentence embeddings compared on a laptop and adopted; a live brief generated with Gemini 3.8 Flash.
 
 ## In plain words
 
@@ -10,7 +10,7 @@ Status: all four tracks done. Open items: persona names (team approval), the sen
 - **Recommender:** after fixing a hidden leak, collaborative filtering helps only once the company has logged outcomes for about half of all employee-intervention pairs, and even then it closes about a fifth of the gap to a perfect model. With an 8-item catalogue, matching interventions to each employee's risk drivers (content-based) is the part to rely on.
 - **Fair-pay model:** Ridge and Lasso are tied (R2 0.872 both). We keep Ridge. Lasso's "feature selection" only removed two redundant one-hot columns.
 - **Macro forecast:** a tuned ARIMA could not beat "next month = this month" for the US quits rate, so the app uses that simple forecast: 1.9% a month, a 2.6% nudge down from the past year's average.
-- **HR Copilot:** the handbook now has real, cited rules. Keyword search (TF-IDF) puts the right policy first for 79% of 33 test questions and in the top 3 for 88%; it fails when managers use different words ("quit" vs "leave").
+- **HR Copilot:** the handbook now has real, cited rules. Meaning-based search (sentence embeddings) puts the right policy first for 88% of 33 test questions and in the top 3 for 97%, up from 79% and 88% with keyword search (TF-IDF), which fails when managers use different words ("quit" vs "leave").
 
 ---
 
@@ -145,21 +145,27 @@ Reference list: `data/knowledge_base/SOURCES.md`.
 | TF-IDF, L2-normalised | Euclidean | 0.788 | 0.879 | 0.847 |
 | TF-IDF, raw | cosine | 0.788 | 0.879 | 0.847 |
 | TF-IDF, raw | Euclidean | 0.121 | 0.333 | 0.326 |
-| Sentence embeddings (MiniLM) | both | run on a laptop | | |
+| **Sentence embeddings (MiniLM)** | cosine | **0.879** | **0.970** | **0.930** |
+| Sentence embeddings (MiniLM) | Euclidean | 0.879 | 0.970 | 0.930 |
+
+MiniLM rows: run on Raj's laptop (`python -m experiments.phase3_rag`, `reports/phase3_rag.json`), since Hugging Face is blocked in the build sandbox. TF-IDF rows: after the tie-break fix below, identical on both machines.
 
 - **Cosine = Euclidean on normalised vectors**, exactly as theory says. Without normalisation, Euclidean distance mostly measures chunk length (vector norms 13.8-33.1), so long policy sections are "far" from every short question and retrieval collapses. Cosine ignores length, so it is unaffected.
 - **A bug we found:** the first run showed cosine and Euclidean differing on normalised TF-IDF. One question ("How do we talk to someone who might quit?") shares no word with the handbook, so its vector is all zeros and an unstable sort decided the order. Ties now sort stably, empty queries count as misses, and the app says "no policy found" for them.
-- **Where TF-IDF fails:** 7 of 33 questions do not get the right section first, all from vocabulary mismatch ("quit"/"resign" vs "leave", "sign off" vs "approval", "log back on" vs "rest"). That is the case for sentence embeddings; the script prints their row when run with `sentence-transformers` installed. Decision rule: switch only if MRR improves; otherwise TF-IDF stays (fewer dependencies).
+- **Where TF-IDF fails:** 7 of 33 questions do not get the right section first, all from vocabulary mismatch ("quit"/"resign" vs "leave", "sign off" vs "approval", "log back on" vs "rest"). Sentence embeddings fix most of these: MRR 0.930 vs 0.847. **Decision (rule fixed in the plan): switch to MiniLM with cosine.** The app already prefers it and falls back to TF-IDF automatically when `sentence-transformers` is not installed, so a light deployment still works (Phase 6 decides which one the host runs). MiniLM vectors are unit length too, so cosine and Euclidean again rank identically.
+- **Tie-break fix:** on the laptop, TF-IDF cosine and Euclidean first differed slightly (MRR 0.842 vs 0.844). The laptop has `faiss` installed, which returned equal scores in its own order and with float32 noise; the sandbox used the numpy path. `VectorIndex.search` now uses faiss only to pick candidates, re-scores them exactly in float64, and treats scores within 1e-6 as tied, broken by handbook order. Verified in the sandbox with and without faiss: cosine = Euclidean = 0.847 MRR either way.
 - **App query fix:** the Copilot used to append raw feature names ("MonthlyIncome") to the question, which match nothing in the handbook. They are now translated to handbook words (`rag.FEATURE_WORDS`, e.g. "salary pay compensation").
 
 ### LLM
 
-`rag.generate` supports Gemini and Claude through environment variables (README, "Optional: LLM"). Needs an API key on your machine or host; without one the app shows the grounded inputs instead of a brief.
+`rag.generate` supports Gemini and Claude through environment variables (README, "Optional: LLM"). A live brief was generated with **Gemini 3.8 Flash** (`LLM_PROVIDER=gemini`, `LLM_MODEL` set to the 3.8 Flash model name from Google AI Studio). Without a key the app shows the grounded inputs instead of a brief, so the demo still works offline. The key lives only in the shell environment, never in the repo.
 
-## What is left
+## Closed items (2026-10-09)
 
-| Item | Who |
+| Item | Outcome |
 |---|---|
-| Persona names: keep Overtime crew / Steady core / Senior veterans, or rename in `segment.PERSONA_RULES` | Team |
-| `pip install sentence-transformers` and `python -m experiments.phase3_rag` on a laptop, to fill the MiniLM row | Raj (Hugging Face is blocked in the build sandbox) |
-| Set `LLM_PROVIDER` and an API key, generate one brief, paste it into the deck | Raj |
+| Persona names | Approved by the team: Overtime crew / Steady core / Senior veterans |
+| Sentence embeddings vs TF-IDF | MiniLM adopted (MRR 0.930 vs 0.847) |
+| Live LLM brief | Generated with Gemini 3.8 Flash |
+
+Carried to Phase 6: whether the host installs `sentence-transformers` (PyTorch is heavy on free tiers) or runs the TF-IDF fallback.

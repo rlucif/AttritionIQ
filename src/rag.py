@@ -84,6 +84,9 @@ class Embedder:
 # --------------------------------------------------------------------------
 # Vector index
 # --------------------------------------------------------------------------
+TIE_TOL = 1e-6  # see VectorIndex.search
+
+
 class VectorIndex:
     """Two indexes over the same chunks so we can compare distance metrics.
     cosine    = inner product on L2-normalised vectors (direction only)
@@ -101,21 +104,41 @@ class VectorIndex:
             self.backend = "numpy"
 
     def search(self, q: np.ndarray, k: int = 3, metric: str = "cosine"):
+        """Top-k chunk indices and scores (cosine: similarity, higher = better;
+        euclidean: distance, lower = better).
+
+        faiss (when installed) picks the candidates; they are then re-scored
+        exactly in float64 and near-ties (within 1e-6) broken by handbook order, so results are
+        the same on every machine. Phase 3 fix: faiss's float32 scores put
+        equal-score chunks in arbitrary order, so on a laptop with faiss,
+        TF-IDF cosine and Euclidean differed slightly (MRR 0.842 vs 0.844)."""
         q = q.astype("float32").reshape(1, -1)
-        if metric == "cosine":
-            qn = q / max(np.linalg.norm(q), 1e-12)
-            if self.backend == "faiss":
-                s, i = self.ip.search(qn, k)
-                return i[0], s[0]
-            s = self.norm @ qn[0]
-            i = np.argsort(-s, kind="stable")[:k]  # stable: ties keep handbook order in both metrics
-            return i, s[i]
+        n = len(self.raw)
         if self.backend == "faiss":
-            d, i = self.l2.search(q, k)
-            return i[0], np.sqrt(d[0])
-        d = np.linalg.norm(self.raw - q, axis=1)
-        i = np.argsort(d, kind="stable")[:k]
-        return i, d[i]
+            pool = min(n, max(5 * k, 50))  # candidate pool, then exact re-scoring
+            if metric == "cosine":
+                qn = q / max(np.linalg.norm(q), 1e-12)
+                cand = self.ip.search(qn, pool)[1][0]
+            else:
+                cand = self.l2.search(q, pool)[1][0]
+            cand = cand[cand >= 0]
+        else:
+            cand = np.arange(n)
+        X, qq = self.raw[cand].astype("float64"), q[0].astype("float64")
+        if metric == "cosine":
+            score = (X / np.clip(np.linalg.norm(X, axis=1, keepdims=True), 1e-12, None)) @ (
+                qq / max(np.linalg.norm(qq), 1e-12))
+            key = -score
+        else:
+            score = np.linalg.norm(X - qq, axis=1)
+            key = score
+        # Scores within 1e-6 of each other count as tied (vectors are stored in
+        # float32, whose rounding noise is ~1e-7); tied chunks keep handbook order.
+        srt = np.argsort(key, kind="stable")
+        group = np.r_[0, np.cumsum(np.diff(key[srt]) > TIE_TOL)]
+        tie_group = np.empty(len(cand), dtype=int); tie_group[srt] = group
+        order = np.lexsort((cand, tie_group))[:k]
+        return cand[order], score[order]
 
 
 class Retriever:

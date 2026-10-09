@@ -1,5 +1,5 @@
 {
-  "run_time": "2026-10-07 18:54:31",
+  "run_time": "2026-10-08 01:11:09",
   "fast_mode": false,
   "data": {
     "rows": 1470,
@@ -58,7 +58,7 @@
         },
         "brier": {
           "mean": 0.15711803695004262,
-          "std": 0.013324276203372301
+          "std": 0.013324276203372315
         }
       }
     },
@@ -110,62 +110,62 @@
         },
         "brier": {
           "mean": 0.1302022846348995,
-          "std": 0.005271427672972745
+          "std": 0.005271427672972743
         }
       }
     },
     "XGBoost": {
       "best_params": {
-        "colsample_bytree": 0.5499874579090014,
-        "learning_rate": 0.04768329952832197,
+        "colsample_bytree": 0.8058265802441404,
+        "learning_rate": 0.010243250407033817,
         "max_depth": 2,
-        "min_child_weight": 4,
-        "n_estimators": 459,
-        "reg_lambda": 2.607024758370768,
-        "subsample": 0.608233797718321
+        "min_child_weight": 1,
+        "n_estimators": 574,
+        "reg_lambda": 1.6738085788752133,
+        "subsample": 0.6557975442608167
       },
-      "best_cv_pr_auc": 0.6133090148711103,
+      "best_cv_pr_auc": 0.6084609662971279,
       "repeated_cv": {
         "pr_auc": {
-          "mean": 0.6060247394479785,
-          "std": 0.05505924928159103,
+          "mean": 0.5991095152739714,
+          "std": 0.049228025940449616,
           "folds": [
-            0.6219044611641997,
-            0.5080829259460596,
-            0.6221737905840928,
-            0.7201558937896345,
-            0.5942280028715647,
-            0.6489005110822852,
-            0.5288498791289898,
-            0.604149764776137,
-            0.5778365571949303,
-            0.6730079187331577,
-            0.5797753924999747,
-            0.6508908793697018,
-            0.6363033659938218,
-            0.5906717079119774,
-            0.5334400406731485
+            0.6012080984783509,
+            0.5648219505029215,
+            0.6210257953124306,
+            0.680705925530533,
+            0.5745430616614032,
+            0.6640085676703914,
+            0.5271280610164376,
+            0.5642687077778233,
+            0.5658466334901551,
+            0.6826666944197604,
+            0.6022258133263341,
+            0.6324265604228625,
+            0.6128535372817789,
+            0.5771203824036444,
+            0.515792939814745
           ]
         },
         "roc_auc": {
-          "mean": 0.8192614541532521,
-          "std": 0.027867794406003305
+          "mean": 0.8087068026421487,
+          "std": 0.0279747306251179
         },
         "recall": {
-          "mean": 0.631578947368421,
-          "std": 0.07687334140423385
+          "mean": 0.6614035087719298,
+          "std": 0.07434954421198979
         },
         "precision": {
-          "mean": 0.46268242125981235,
-          "std": 0.04597034037684073
+          "mean": 0.4208338669131774,
+          "std": 0.04313039891004123
         },
         "f1": {
-          "mean": 0.5320083529061506,
-          "std": 0.0479130398528375
+          "mean": 0.5123926868696932,
+          "std": 0.043915532266797896
         },
         "brier": {
-          "mean": 0.12765675286451975,
-          "std": 0.010410772306541503
+          "mean": 0.15131958524386088,
+          "std": 0.00842485749514254
         }
       }
     },
@@ -217,8 +217,8 @@
           "std": 0.0576767625983559
         },
         "brier": {
-          "mean": 0.1354020995219151,
-          "std": 0.014014057348217162
+          "mean": 0.13540209952191515,
+          "std": 0.01401405734821717
         }
       }
     }
@@ -246,10 +246,10 @@
         "p_corrected": 0.006471906146171129
       },
       "XGBoost": {
-        "mean_diff": 0.01897364157039486,
-        "folds_won": 10,
+        "mean_diff": 0.025888865744401777,
+        "folds_won": 12,
         "folds": 15,
-        "p_corrected": 0.3921546609441133
+        "p_corrected": 0.3403116508736806
       },
       "Neural Network (MLP)": {
         "mean_diff": 0.05528411074763369,
@@ -280,28 +280,28 @@
   "calibration": {
     "oof_train": {
       "uncalibrated": {
-        "brier": 0.15667480264269812,
+        "brier": 0.1566748026426981,
         "ece": 0.19584639854364164,
         "mean_predicted": 0.35502672733252366,
         "observed_rate": 0.16156462585034015
       },
       "calibrated": {
         "brier": 0.09577270049221558,
-        "ece": 0.042199736910590556,
-        "mean_predicted": 0.16262809837098932,
+        "ece": 0.04219973691059054,
+        "mean_predicted": 0.16262809837098935,
         "observed_rate": 0.16156462585034015
       }
     },
     "test": {
       "uncalibrated": {
-        "brier": 0.1587449490393635,
-        "ece": 0.19157368355604032,
-        "mean_predicted": 0.34164753081721416,
+        "brier": 0.15874494903936345,
+        "ece": 0.19157368355604043,
+        "mean_predicted": 0.3416475308172143,
         "observed_rate": 0.1598639455782313
       },
       "calibrated": {
-        "brier": 0.10266081837281392,
-        "ece": 0.04364544735361298,
+        "brier": 0.1026608183728139,
+        "ece": 0.04364544735361297,
         "mean_predicted": 0.14778423489964504,
         "observed_rate": 0.1598639455782313
       }
@@ -320,7 +320,7 @@
     "threshold": 0.32,
     "pr_auc": 0.5618242046352331,
     "roc_auc": 0.7855973813420623,
-    "brier": 0.10266081837281392,
+    "brier": 0.1026608183728139,
     "recall": 0.40425531914893614,
     "precision": 0.5277777777777778,
     "f1": 0.4578313253012048,
@@ -336,7 +336,7 @@
     "threshold": 0.5,
     "pr_auc": 0.5618242046352331,
     "roc_auc": 0.7855973813420623,
-    "brier": 0.10266081837281392,
+    "brier": 0.1026608183728139,
     "recall": 0.2765957446808511,
     "precision": 0.8666666666666667,
     "f1": 0.41935483870967744,
@@ -914,7 +914,7 @@
   "shap_individual_examples": {
     "caught_leaver": {
       "employee": 478,
-      "p_leave": 0.9328639137294912,
+      "p_leave": 0.9328639137294914,
       "drivers": [
         {
           "feature": "JobRole",
@@ -945,7 +945,7 @@
     },
     "missed_leaver": {
       "employee": 1082,
-      "p_leave": 0.14753708365058898,
+      "p_leave": 0.14753708365058918,
       "drivers": [
         {
           "feature": "BusinessTravel",
@@ -976,7 +976,7 @@
     },
     "false_alarm": {
       "employee": 411,
-      "p_leave": 0.6094395078823521,
+      "p_leave": 0.6094395078823532,
       "drivers": [
         {
           "feature": "JobRole",
@@ -1285,7 +1285,7 @@
     "dbscan_eps": 3.268451428125781,
     "dbscan_outliers": 32,
     "dbscan_clusters": 1,
-    "why_segments_silhouette": 0.20505138766108993,
+    "why_segments_silhouette": 0.2050513876610932,
     "why_segments_note": "raw SHAP (log-odds), one-hot summed, pay & seniority grouped; test rows only",
     "personas_draft": {
       "2": "Senior veterans",
@@ -1301,8 +1301,8 @@
   "pay_model": {
     "Ridge": {
       "r2_mean": 0.8731561477535783,
-      "r2_std": 0.012517313506615408,
-      "rmse_log_mean": 0.2342962414767083,
+      "r2_std": 0.01251731350661562,
+      "rmse_log_mean": 0.23429624147670816,
       "alpha": 0.8531678524172805,
       "n_zero_coefs": 0,
       "coefficients": {
@@ -1325,8 +1325,8 @@
       }
     },
     "Lasso": {
-      "r2_mean": 0.8730974110326848,
-      "r2_std": 0.012548842999733486,
+      "r2_mean": 0.873097411032685,
+      "r2_std": 0.012548842999733514,
       "rmse_log_mean": 0.23435291383778592,
       "alpha": 0.0001,
       "n_zero_coefs": 2,
@@ -1354,19 +1354,19 @@
     "d_selection": [
       {
         "d": 0,
-        "adf_p": 0.20296878772018695,
+        "adf_p": 0.2029687877201894,
         "kpss_p": 0.01,
         "stationary": false
       },
       {
         "d": 1,
-        "adf_p": 0.00013258699961124498,
+        "adf_p": 0.00013258699961124848,
         "kpss_p": 0.1,
         "stationary": true
       }
     ],
     "arima_order": [
-      2,
+      3,
       1,
       3
     ],
@@ -1375,8 +1375,8 @@
         {
           "origin": "2020-08-01",
           "test_start": "2020-09-01",
-          "mae_arima": 0.4547658563531754,
-          "mape_arima": 17.54417878937139,
+          "mae_arima": 0.47090614266598335,
+          "mape_arima": 18.20216099514252,
           "mae_naive": 0.3999999999999999,
           "mape_naive": 15.327933740977217,
           "mae_seasonal_naive": 0.4416666666666666,
@@ -1385,8 +1385,8 @@
         {
           "origin": "2021-08-01",
           "test_start": "2021-09-01",
-          "mae_arima": 0.10151768655847082,
-          "mape_arima": 3.5462125069238746,
+          "mae_arima": 0.10657845244053166,
+          "mape_arima": 3.7185245425346327,
           "mae_naive": 0.09166666666666667,
           "mape_naive": 3.210204014801716,
           "mae_seasonal_naive": 0.39166666666666644,
@@ -1395,8 +1395,8 @@
         {
           "origin": "2022-08-01",
           "test_start": "2022-09-01",
-          "mae_arima": 0.2716136197041236,
-          "mape_arima": 11.25314366999824,
+          "mae_arima": 0.26576550095717427,
+          "mape_arima": 11.016831858113562,
           "mae_naive": 0.3083333333333332,
           "mape_naive": 12.75292126016763,
           "mae_seasonal_naive": 0.3499999999999999,
@@ -1405,8 +1405,8 @@
         {
           "origin": "2023-08-01",
           "test_start": "2023-09-01",
-          "mae_arima": 0.1754462204447136,
-          "mape_arima": 8.214270567104197,
+          "mae_arima": 0.1401076412209402,
+          "mape_arima": 6.59402671073108,
           "mae_naive": 0.12499999999999978,
           "mape_naive": 5.898268398268388,
           "mae_seasonal_naive": 0.3166666666666666,
@@ -1415,8 +1415,8 @@
         {
           "origin": "2024-08-01",
           "test_start": "2024-09-01",
-          "mae_arima": 0.10666964806761454,
-          "mape_arima": 5.4002407334679345,
+          "mae_arima": 0.1011609007007852,
+          "mape_arima": 5.10849956975282,
           "mae_naive": 0.10000000000000009,
           "mape_naive": 5.049840510366831,
           "mae_seasonal_naive": 0.17500000000000004,
@@ -1425,8 +1425,8 @@
         {
           "origin": "2025-08-01",
           "test_start": "2025-09-01",
-          "mae_arima": 0.07434909250001469,
-          "mape_arima": 3.8839776565536464,
+          "mae_arima": 0.05755427405742014,
+          "mape_arima": 3.0168402265986893,
           "mae_naive": 0.050000000000000044,
           "mape_naive": 2.631578947368424,
           "mae_seasonal_naive": 0.10000000000000009,
@@ -1434,8 +1434,8 @@
         }
       ],
       "horizon": 12,
-      "mae_arima_mean": 0.19739368727135212,
-      "mape_arima_mean": 8.307003987236547,
+      "mae_arima_mean": 0.1903454853404725,
+      "mape_arima_mean": 7.942813983812218,
       "mae_naive_mean": 0.1791666666666666,
       "mape_naive_mean": 7.4784578119917,
       "mae_seasonal_naive_mean": 0.2958333333333333,
@@ -1457,105 +1457,69 @@
   },
   "rag_retrieval": {
     "cosine": {
-      "hit_at_1": 0.7878787878787878,
-      "hit_at_3": 0.8787878787878788,
-      "mrr": 0.846969696969697,
+      "hit_at_1": 0.8787878787878788,
+      "hit_at_3": 0.9696969696969697,
+      "mrr": 0.9303030303030303,
       "not_first": [
         {
-          "question": "He is unhappy with his manager. What support is available?",
-          "expected": "Manager Relationship and Team Fit",
-          "got": "Overtime and Workload",
-          "rank": 6
+          "question": "He has been in the same role for six years and is bored. Options?",
+          "expected": "Internal Mobility and Role Rotation",
+          "got": "Manager Relationship and Team Fit",
+          "rank": 2
         },
         {
           "question": "How do we talk to someone who might quit?",
           "expected": "Stay Interviews and Exit Process",
-          "got": "(no word in common)",
-          "rank": null
+          "got": "Manager Relationship and Team Fit",
+          "rank": 2
         },
         {
           "question": "After a late-night release, how soon can I ask him to log back on?",
           "expected": "Overtime and Workload",
-          "got": "Responsible Use of People Analytics",
-          "rank": 4
-        },
-        {
-          "question": "When does the next round of promotion decisions happen?",
-          "expected": "Promotion and Career Progression",
-          "got": "Responsible Use of People Analytics",
-          "rank": 2
+          "got": "Flexible and Remote Work",
+          "rank": 5
         },
         {
           "question": "Who signs off if I want to move someone up a level mid-year?",
           "expected": "Promotion and Career Progression",
-          "got": "Learning and Development",
-          "rank": 3
-        },
-        {
-          "question": "How long must someone wait before applying for a job in another department?",
-          "expected": "Internal Mobility and Role Rotation",
-          "got": "Compensation and Pay Equity",
-          "rank": 2
-        },
-        {
-          "question": "What should a conversation with an employee we fear is about to resign cover?",
-          "expected": "Stay Interviews and Exit Process",
           "got": "Manager Relationship and Team Fit",
-          "rank": 5
+          "rank": 2
         }
       ]
     },
     "euclidean": {
-      "hit_at_1": 0.7878787878787878,
-      "hit_at_3": 0.8787878787878788,
-      "mrr": 0.846969696969697,
+      "hit_at_1": 0.8787878787878788,
+      "hit_at_3": 0.9696969696969697,
+      "mrr": 0.9303030303030303,
       "not_first": [
         {
-          "question": "He is unhappy with his manager. What support is available?",
-          "expected": "Manager Relationship and Team Fit",
-          "got": "Overtime and Workload",
-          "rank": 6
+          "question": "He has been in the same role for six years and is bored. Options?",
+          "expected": "Internal Mobility and Role Rotation",
+          "got": "Manager Relationship and Team Fit",
+          "rank": 2
         },
         {
           "question": "How do we talk to someone who might quit?",
           "expected": "Stay Interviews and Exit Process",
-          "got": "(no word in common)",
-          "rank": null
+          "got": "Manager Relationship and Team Fit",
+          "rank": 2
         },
         {
           "question": "After a late-night release, how soon can I ask him to log back on?",
           "expected": "Overtime and Workload",
-          "got": "Responsible Use of People Analytics",
-          "rank": 4
-        },
-        {
-          "question": "When does the next round of promotion decisions happen?",
-          "expected": "Promotion and Career Progression",
-          "got": "Responsible Use of People Analytics",
-          "rank": 2
+          "got": "Flexible and Remote Work",
+          "rank": 5
         },
         {
           "question": "Who signs off if I want to move someone up a level mid-year?",
           "expected": "Promotion and Career Progression",
-          "got": "Learning and Development",
-          "rank": 3
-        },
-        {
-          "question": "How long must someone wait before applying for a job in another department?",
-          "expected": "Internal Mobility and Role Rotation",
-          "got": "Compensation and Pay Equity",
-          "rank": 2
-        },
-        {
-          "question": "What should a conversation with an employee we fear is about to resign cover?",
-          "expected": "Stay Interviews and Exit Process",
           "got": "Manager Relationship and Team Fit",
-          "rank": 5
+          "rank": 2
         }
       ]
     },
     "n_questions": 33,
     "n_chunks": 13,
-    "embedding_backend": "tfidf"
+    "embedding_backend": "sentence-transformers"
   }
 }

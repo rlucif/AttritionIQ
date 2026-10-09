@@ -348,7 +348,75 @@
     ]
   },
   "minilm": {
-    "status": "skipped - sentence-transformers not installed or model not downloadable here"
+    "cosine": {
+      "hit_at_1": 0.8787878787878788,
+      "hit_at_3": 0.9696969696969697,
+      "mrr": 0.9303030303030303,
+      "not_first": [
+        {
+          "question": "He has been in the same role for six years and is bored. Options?",
+          "expected": "Internal Mobility and Role Rotation",
+          "got": "Manager Relationship and Team Fit",
+          "rank": 2
+        },
+        {
+          "question": "How do we talk to someone who might quit?",
+          "expected": "Stay Interviews and Exit Process",
+          "got": "Manager Relationship and Team Fit",
+          "rank": 2
+        },
+        {
+          "question": "After a late-night release, how soon can I ask him to log back on?",
+          "expected": "Overtime and Workload",
+          "got": "Flexible and Remote Work",
+          "rank": 5
+        },
+        {
+          "question": "Who signs off if I want to move someone up a level mid-year?",
+          "expected": "Promotion and Career Progression",
+          "got": "Manager Relationship and Team Fit",
+          "rank": 2
+        }
+      ]
+    },
+    "euclidean": {
+      "hit_at_1": 0.8787878787878788,
+      "hit_at_3": 0.9696969696969697,
+      "mrr": 0.9303030303030303,
+      "not_first": [
+        {
+          "question": "He has been in the same role for six years and is bored. Options?",
+          "expected": "Internal Mobility and Role Rotation",
+          "got": "Manager Relationship and Team Fit",
+          "rank": 2
+        },
+        {
+          "question": "How do we talk to someone who might quit?",
+          "expected": "Stay Interviews and Exit Process",
+          "got": "Manager Relationship and Team Fit",
+          "rank": 2
+        },
+        {
+          "question": "After a late-night release, how soon can I ask him to log back on?",
+          "expected": "Overtime and Workload",
+          "got": "Flexible and Remote Work",
+          "rank": 5
+        },
+        {
+          "question": "Who signs off if I want to move someone up a level mid-year?",
+          "expected": "Promotion and Career Progression",
+          "got": "Manager Relationship and Team Fit",
+          "rank": 2
+        }
+      ]
+    },
+    "n_questions": 33,
+    "n_chunks": 13,
+    "embedding_backend": "sentence-transformers",
+    "vector_norm_range": [
+      0.9999999403953552,
+      1.0000001192092896
+    ]
   },
   "table": [
     {
@@ -378,7 +446,21 @@
       "hit_at_1": 0.1212,
       "hit_at_3": 0.3333,
       "mrr": 0.3262
+    },
+    {
+      "setup": "minilm",
+      "metric": "cosine",
+      "hit_at_1": 0.8788,
+      "hit_at_3": 0.9697,
+      "mrr": 0.9303
+    },
+    {
+      "setup": "minilm",
+      "metric": "euclidean",
+      "hit_at_1": 0.8788,
+      "hit_at_3": 0.9697,
+      "mrr": 0.9303
     }
   ],
-  "decision": "tfidf_l2/cosine (best or tied; fewest dependencies)"
+  "decision": "minilm/cosine"
 }

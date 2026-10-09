@@ -155,7 +155,7 @@ def describe_clusters(profile: pd.DataFrame, df: pd.DataFrame | None = None,
     return out
 
 
-# DRAFT persona names (Phase 3, k = 3), pending team approval (open decision 4).
+# Persona names (Phase 3, k = 3), approved by the team on 2026-10-09 (open decision 4).
 # Assigned by profile, not by cluster number, so a re-run that swaps the
 # numbering cannot attach a name to the wrong group.
 PERSONA_RULES = {

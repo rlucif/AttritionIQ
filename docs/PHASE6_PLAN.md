@@ -46,6 +46,15 @@ Written 2026-10-09, before any deployment. Pass rules are fixed first, as in Pha
 | P3 | **Pass.** Same fresh copy with no dataset and no `train.py`, `streamlit run app.py` from a cold start: all 4 pages render with no exception (first page 5.5 s cold, 2.5-3.6 s after); 20-row CSV scored (4 flagged at 0.32); download returns 20 rows; audit log written |
 | - | `google-genai` 2.29.0 added; all 14 pinned versions unchanged; `uv pip check` reports no conflicts. All pins plus `google-genai` also install and import on Python 3.14.6 |
 
+## Live results (2026-10-09, https://attritioniq-ds-project.streamlit.app)
+
+Deployed from `main` at `51bcdf4` (PR #4). Build log: Python 3.13.16, dependencies from `requirements.txt` via uv. Community Cloud replaced `pyarrow` 25.0.1 with 24.0.0 itself ("known segfault, apache/arrow#50471"); `pyarrow` is a Streamlit dependency, not one of our pins.
+
+| # | Result |
+|---|---|
+| P4 | **Pass** (checked in a narrow, phone-width browser pane). All 4 pages render, no exception. Overview matches the frozen model: threshold 0.32, 294 employees, 36 flagged, $181,132 saved (Phase 2: $181k). 20-row CSV scored, 4 flagged (same as P3); download button shown. HR copilot retrieval returns handbook clauses. Still to do: Raj on a real phone |
+| P5 | **Fail, fixed.** "Generate retention brief" spun on "Drafting the brief" for 4+ minutes with nothing in the logs. Cause: neither LLM SDK sets a timeout by default (`google-genai` 2.29: no timeout, no retries), so a request that gets no reply waits forever; a failed request would have shown the template within seconds. Reproduced locally against a server that accepts and never replies: the old code still waiting after 20 s. Fix (`src/rag.py`): `LLM_TIMEOUT_S` (default 30 s, env override) on the Gemini and Claude clients, and failures are printed to the host log. New test `tests/test_llm_timeout.py`: falls back to the template in about 3 s. Full suite on the fresh copy: 26 passed, 0 skipped. `train.py` never calls the LLM, so `metrics.json` is unaffected. Re-check P5 live after the fix is merged; if the log then shows a timeout or an error, the cause is the model name, key or quota |
+
 ## Sources
 
 - Streamlit: [Manage your app (limits, sleep)](https://docs.streamlit.io/deploy/streamlit-community-cloud/manage-your-app), [Secrets management](https://docs.streamlit.io/develop/concepts/connections/secrets-management), [Upgrade Python](https://docs.streamlit.io/deploy/streamlit-community-cloud/manage-your-app/upgrade-python)

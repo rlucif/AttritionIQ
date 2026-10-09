@@ -73,9 +73,11 @@ The look takes its cue from [gsap.com](https://gsap.com/core/): dark canvas, cre
 
 ## Live app (Streamlit Community Cloud)
 
+**Live at https://attritioniq-ds-project.streamlit.app**
+
 The live site runs on Streamlit Community Cloud's free tier, straight from `main`. It uses the committed `models/attritioniq_bundle.joblib` (from the reference run below), so the host never runs `train.py` or downloads the dataset. Setup, done once in the Community Cloud dashboard:
 
-1. **Create app** → repository `rlucif/AttritionIQ`, branch `main`, main file `app.py`, custom subdomain `attritioniq`.
+1. **Create app** → repository `rlucif/AttritionIQ`, branch `main`, main file `app.py`, custom subdomain `attritioniq-ds-project`.
 2. **Advanced settings** → Python 3.13 (the tested version). Secrets (TOML; top-level keys become environment variables):
    ```toml
    LLM_PROVIDER = "gemini"
@@ -84,7 +86,7 @@ The live site runs on Streamlit Community Cloud's free tier, straight from `main
    ```
 3. Deploy. Every push to `main` redeploys.
 
-The copilot runs the TF-IDF retriever on the host (no PyTorch). The app sleeps after 12 hours without visits; open it a few minutes before a demo to wake it. The audit log on the Model & trust page lives on the host's disk and resets when the app restarts.
+The copilot runs the TF-IDF retriever on the host (no PyTorch). Retrieval and citations always work. The written brief comes from Gemini when it answers; if Gemini is busy or slow (it has returned 503 "high demand" and 504 on the free tier), the app waits at most `LLM_TIMEOUT_S` seconds (default 30) and shows the grounded template brief with the error, so the page never hangs. The app sleeps after 12 hours without visits; open it a few minutes before a demo to wake it. The audit log on the Model & trust page lives on the host's disk and resets when the app restarts.
 
 ## Data sources
 

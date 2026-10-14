@@ -32,7 +32,7 @@ Written 2026-10-09, before any deployment. Pass rules are fixed first, as in Pha
 | P2 | Fresh clone of the branch, new Python 3.13 venv, `pip install -r requirements.txt`, `pytest -q` | 0 failures, 0 skips |
 | P3 | Host simulation: fresh clone **without** `data/raw/` and without running `train.py`, `streamlit run app.py`, headless browser | All 4 pages render with no exception; CSV upload scores rows; download works |
 | P4 | Live: deploy on Community Cloud (Raj) | Build succeeds; P3 passes on the live URL on a laptop and a phone |
-| P5 | Live brief | Employee page brief comes from Gemini, not the template |
+| P5 | Live brief | Employee page brief comes from Gemini, not the template (closed 2026-10-09 as an accepted limitation: fallback verified, see below) |
 | P6 | Before the demo | Open the site 10 minutes early to wake it; local `streamlit run app.py` ready as backup |
 
 "Run `pytest` on the host" from the original plan is replaced by P2 + P3: Community Cloud gives no shell.
@@ -66,8 +66,13 @@ Two clicks on "Generate retention brief" (employee #478):
 
 - **The fix works:** the page no longer hangs; it falls back to the grounded template with the error shown.
 - **P5 not yet passed, cause outside the code:** both errors come from Google's servers after the request was accepted, so the key, `LLM_PROVIDER` and `LLM_MODEL` in Secrets are correct. The model is overloaded.
-- **Next (Raj, no code change):** retry later. If it keeps failing, change `LLM_MODEL` in the Secrets box to a less busy Gemini model listed in Google AI Studio, and/or add `LLM_TIMEOUT_S = "60"` (the env override already exists). Changing Secrets does not touch the repo, so it does not re-open Phase 5.
+- **Decision (Raj, 2026-10-09): accepted as a known limitation.** The instructor is fine with the app working while the LLM part of RAG falls back. P5 is closed as "fallback verified"; retrieval, citations and the grounded template brief all work live.
+- **Optional later (Raj, no code change):** retry later. If it keeps failing, change `LLM_MODEL` in the Secrets box to a less busy Gemini model listed in Google AI Studio, and/or add `LLM_TIMEOUT_S = "60"` (the env override already exists). Changing Secrets does not touch the repo, so it does not re-open Phase 5.
 - **Demo rule:** the brief is shown as "optional live" in the Phase 7 demo script; the template fallback is the planned path if Gemini is busy.
+
+## Phase 6 result
+
+**Done (2026-10-09).** P1-P4 pass; P5 closed as an accepted limitation (Gemini capacity, not code; the fallback is verified live). P6 applies on presentation day. One check left for Raj: open the live site on a real phone (P4 was run in a phone-width browser pane).
 
 ## Sources
 

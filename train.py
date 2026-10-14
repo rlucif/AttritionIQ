@@ -26,7 +26,8 @@ import shap  # noqa: E402
 from scipy.cluster.hierarchy import dendrogram  # noqa: E402
 from sklearn.base import clone  # noqa: E402
 from sklearn.calibration import calibration_curve  # noqa: E402
-from sklearn.metrics import average_precision_score, precision_recall_curve  # noqa: E402
+from sklearn.metrics import (average_precision_score, precision_recall_curve,  # noqa: E402
+                             roc_auc_score, roc_curve)
 
 from src import config, data, forecast, model, rag, recommend, roi, segment  # noqa: E402
 
@@ -149,7 +150,7 @@ def main(fast: bool = False):
     metrics["error_analysis_test"] = model.error_analysis(test, p_test, threshold).round(3).reset_index().to_dict("records")
     metrics["error_analysis_oof_train"] = model.error_analysis(train, oof, threshold).round(3).reset_index().to_dict("records")
 
-    # Figures: threshold cost curve, PR curves, calibration
+    # Figures: threshold cost curve, PR curves, ROC curves, calibration
     plt.figure(figsize=(6, 4))
     plt.plot(curve.threshold, curve.total_cost)
     plt.axvline(threshold, ls="--", c="k", label=f"cost-optimal {threshold:.2f}")
@@ -166,6 +167,24 @@ def main(fast: bool = False):
     plt.axhline(y_test.mean(), ls=":", c="grey", label="random")
     plt.xlabel("Recall"); plt.ylabel("Precision"); plt.legend(fontsize=7); plt.title("Precision-recall (test)")
     savefig("pr_curves_test")
+
+    # ROC on the same uncalibrated models; dot = deployed (calibrated) model at the threshold
+    plt.figure(figsize=(5.5, 4.6))
+    for name, est in fitted.items():
+        p = est.predict_proba(X_test)[:, 1]
+        fpr, tpr, _ = roc_curve(y_test, p)
+        chosen = name == best_name
+        plt.plot(fpr, tpr, lw=2.2 if chosen else 1.2,
+                 label=f"{name}{' (chosen)' if chosen else ''}  AUC {roc_auc_score(y_test, p):.3f}")
+    cm = metrics["test_evaluation"]["confusion_matrix"]
+    op_fpr, op_tpr = cm["fp"] / (cm["fp"] + cm["tn"]), cm["tp"] / (cm["tp"] + cm["fn"])
+    plt.scatter([op_fpr], [op_tpr], s=60, c="k", zorder=5,
+                label=f"Deployed: threshold {threshold:.2f} (TPR {op_tpr:.2f}, FPR {op_fpr:.2f})")
+    plt.plot([0, 1], [0, 1], ls=":", c="grey", label="Random  AUC 0.500")
+    plt.xlim(0, 1); plt.ylim(0, 1.01)
+    plt.xlabel("False positive rate (stayers wrongly flagged)"); plt.ylabel("True positive rate (leavers caught)")
+    plt.legend(fontsize=7, loc="lower right"); plt.title("ROC curves (test)")
+    savefig("roc_curves_test")
 
     plt.figure(figsize=(5, 4))
     for label, p in [("uncalibrated", p_test_raw), ("calibrated", p_test)]:
